@@ -1,9 +1,8 @@
-const ApiUtil = require("../api/api_util");
-const Country = require("./country");
+import Country from "./country";
 
 class World {
-    constructor() {
-        this.apiData = ApiUtil.worldCO2Data();
+    constructor(data) {
+        this.apiData = data; 
         this.countries = this.createCountries();
     }
 

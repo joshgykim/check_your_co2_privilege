@@ -1,26 +1,14 @@
 
-import Country from "./scripts/world/country";
+import WorldMap from "./scripts/world/world_map";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async function() {
+    const APIPromise = await fetch("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.json");
+    if (!APIPromise.ok) {
+        throw new Error("API currently not available.");
+    }
 
-    const promiseData = fetch("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.json");
-    promiseData.then(response => response.json())
-               .then(result => {
-                    const apiData = result;
+    const worldCO2Data = await APIPromise.json();
+    const worldMap = new WorldMap(worldCO2Data);
 
-                    let countries = [];
-                    let countryNames = Object.keys(apiData);
-                    console.log(countryNames.length);
-
-                    countryNames.forEach( name => {
-                        if (apiData[name].iso_code && name !== "World") {
-                            let dataArr = apiData[name].data;
-                            let country = new Country(name, dataArr[dataArr.length-1]);
-                            countries.push(country);
-                        }
-                    })
-
-                    console.log(countries);
-                })
-    
+    console.log(worldMap.world.countries);
 })

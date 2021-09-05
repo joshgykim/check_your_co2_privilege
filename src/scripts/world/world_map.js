@@ -1,7 +1,9 @@
-const World = require("./world");
+import World from "./world";
 
 class WorldMap {
-    constructor() {
-        this.world = new World();
+    constructor(data) {
+        this.world = new World(data);
     }
 }
+
+export default WorldMap;

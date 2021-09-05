@@ -7,15 +7,26 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="./dist/main.css" />
     <link rel="stylesheet" href="./src/styles/reset.css" />
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-queue.v3.min.js"></script>
     <script src="./dist/main.js"></script>
     <title>Check Your CO2 Privilege!</title>
 </head>
 
 <body>
-    <div id="user-carbon">User Carbon
+    <div id="user-carbon">
     </div>
-    <div id="world-carbon">World Carbon
+    <h3>World Carbon</h3>
+    <div id="world-carbon">
+        <span>
+            <label><input id="continents" type="radio" name="grouping" value="continents">Continents</label>
+            <label><input id="country-centers" type="radio" name="grouping" value="country-centers">Country Centers</label>
+        </span>
     </div>
+
+    <script>
+        
+    </script>
 </body>
 
 </html>
