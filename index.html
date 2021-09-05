@@ -6,11 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="./dist/main.css" />
-    <link rel="stylesheet" href="./src/styles/reset.css" />
-    <link rel="stylesheet" href="./src/styles/1_circles.css" />
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-queue.v3.min.js"></script>
-    <script src="./src/scripts/d3/bubble_map.js"></script>
+    <script src="src/scripts/d3/bubble_map.js"></script>
     <script src="./dist/main.js"></script>
     <title>Check Your CO2 Privilege!</title>
 </head>
@@ -30,8 +28,8 @@
 
     <script>
         d3.queue()
-            .defer(d3.csv, "./content/countries.csv")
-            .defer(d3.json, "./content/continent-names.json")
+            .defer(d3.csv, "./dist/assets/countries.csv")
+            .defer(d3.json, "https://raw.githubusercontent.com/jeffreymorganio/d3-country-bubble-chart/master/continent-names.json")
             .await(createBubbleChart);
     </script>
 </body>
