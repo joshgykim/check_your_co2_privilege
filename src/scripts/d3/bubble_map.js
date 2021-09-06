@@ -11,7 +11,7 @@ function createWorldMap(error, countries, continentNames) {
     return worldCO2Data;
   }
 
-  console.log(getData());
+  // console.log(getData());
 
   // Population data
   let populations = countries.map(countryObj => parseInt(countryObj.Population));
@@ -38,8 +38,8 @@ function createWorldMap(error, countries, continentNames) {
   
 
   // Creating canvas(svg) element for worldMap
-  let mapWidth = 1200;
-  let mapHeight = 800;
+  let mapWidth = 1500;
+  let mapHeight = 1000;
   let worldMap = d3.select("#bubble-chart")
     .append("svg")
     .attr("width", mapWidth)
@@ -47,7 +47,7 @@ function createWorldMap(error, countries, continentNames) {
 
 
   // Populating worldMap with circle elements
-  let circleSize = {min: 10, max: 80};
+  let circleSize = {min: 10, max: 120};
 
   let circleRadiusScale = d3.scaleSqrt()
     .domain(populationRange)
