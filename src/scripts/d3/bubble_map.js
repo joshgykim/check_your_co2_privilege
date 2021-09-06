@@ -1,14 +1,34 @@
 function createWorldMap(error, countries, continentNames) {
+  let worldCO2Data;
 
   async function getData() {
     const promise = await fetch("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.json");
     if (!promise.ok) {
       throw new Error("API not available");
     }
+    let data = await promise.json();
+    worldCO2Data = filterData(data);
+    console.log(worldCO2Data)
+    updateCircles();
+    
+  }
 
-    const worldCO2Data = await promise.json();
-    console.log(worldCO2Data);
-    return worldCO2Data;
+  function filterData(CO2data) {
+    let countriesCO2 = [];
+    let countryCO2Names = Object.keys(CO2data);
+
+    countryCO2Names.forEach( name => {
+      if (CO2data[name].iso_code && name != "World") {
+        let dataArr = CO2data[name].data;
+
+        let countryCO2Obj = {
+          Countryname: name,
+          data: dataArr[dataArr.length-1]
+        }
+        countriesCO2.push(countryCO2Obj);
+      }
+    })
+    return countriesCO2
   }
 
   getData();
@@ -72,6 +92,26 @@ function createWorldMap(error, countries, continentNames) {
       .attr("fill", function(d) {
         return continentColorScale(d.ContinentCode);
       });
+  }
+
+  function updateCircles() {
+    let CO2s = worldCO2Data.map(countryObj => {
+      if (countryObj.data.co2 !== undefined) {
+        return countryObj.data.co2;
+      } else {
+        return 0;
+      }
+    });
+    let CO2Range = [Math.min(...CO2s), Math.max(...CO2s)];
+    let circleRadiusScaleCO2 = d3.scaleSqrt()
+      .domain(CO2Range)
+      .range([5, 200]);
+
+    circles
+      .attr("r", function(d) {
+        let index = countries.indexOf(d);
+        return circleRadiusScaleCO2(CO2s[index]);
+      })
   }
 
   function hoveredOver(country) {
@@ -203,35 +243,41 @@ function createWorldMap(error, countries, continentNames) {
   
         function continentForceX(d) {
           if (d.ContinentCode === "EU") {
-            return left(mapWidth);
+            return center(mapWidth);
           } else if (d.ContinentCode === "AF") {
-            return left(mapWidth);
+            return center(mapWidth);
           } else if (d.ContinentCode === "AS") {
-            return right(mapWidth);
-          } else if (d.ContinentCode === "NA" || d.ContinentCode === "SA") {
-            return right(mapWidth);
+            return rightCenter(mapWidth);
+          } else if (d.ContinentCode === "NA") {
+            return left(mapWidth);
+          } else if (d.ContinentCode === "SA") {
+            return left(mapWidth);
           }
-          return center(mapWidth);
+          return rightCenter(mapWidth);
         }
   
         function continentForceY(d) {
           if (d.ContinentCode === "EU") {
             return top(mapHeight);
           } else if (d.ContinentCode === "AF") {
-            return bottom(mapHeight);
+            return bottom(mapHeight)-100;
           } else if (d.ContinentCode === "AS") {
-            return top(mapHeight);
-          } else if (d.ContinentCode === "NA" || d.ContinentCode === "SA") {
+            return topCenter(mapHeight);
+          } else if (d.ContinentCode === "NA") {
+            return topCenter(mapHeight);
+          } else if (d.ContinentCode === "SA") {
             return bottom(mapHeight);
           }
-          return center(mapHeight);
+          return bottom(mapHeight);
         }
   
         function left(dimension) { return dimension / 4; }
-        function center(dimension) { return dimension / 2; }
-        function right(dimension) { return dimension / 4 * 3; }
-        function top(dimension) { return dimension / 4; }
+        function center(dimension) { return dimension / 2 }
+        function right(dimension) { return dimension / 7 * 5; }
+        function top(dimension) { return dimension / 5; }
+        function topCenter(dimension) { return dimension / 5 * 2; }
         function bottom(dimension) { return dimension / 4 * 3; }
+        function rightCenter(dimension) { return dimension / 4 * 3}
       }
   
       // function createPopulationForces() {
@@ -274,7 +320,25 @@ function createWorldMap(error, countries, continentNames) {
     }
   
     function forceCollide(d) {
-      return countryCenterGrouping() ? 0 : circleRadiusScale(d.Population) + 1;
+      return countryCenterGrouping() ? 0 : circleRadiusScale(d.Population) * 1.25;
+    }
+
+    function updateForceSimulation() {
+      forceSimulation = d3.forceSimulation()
+        .force("x", forces.countryCenters.x)
+        .force("y", forces.countryCenters.y)
+        .force("collide", d3.forceCollide(updateForceCollide));
+      
+      function updateForceCollide(d) {
+        return countryCenterGrouping() ? 0 : circleRadiusScaleCO2(d.Population) * 1.25;
+      }
+
+      forceSimulation.nodes(countries)
+        .on("tick", function() {
+          circles
+            .attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; });
+        });
     }
   
     function countryCenterGrouping() {
@@ -322,7 +386,6 @@ function createWorldMap(error, countries, continentNames) {
       function addListener(selector, forces) {
         d3.select(selector).on("click", function() {
           updateForces(forces);
-          toggleContinentKey();
         });
       }
   
