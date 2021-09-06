@@ -7,11 +7,11 @@ function createWorldMap(error, countries, continentNames) {
     }
 
     const worldCO2Data = await promise.json();
-    // console.log(worldCO2Data);
+    console.log(worldCO2Data);
     return worldCO2Data;
   }
 
-  // console.log(getData());
+  getData();
 
   // Population data
   let populations = countries.map(countryObj => parseInt(countryObj.Population));
