@@ -6,7 +6,7 @@ function createWorldMap(error, countries, continentNames) {
       throw new Error("API not available");
     }
 
-    const worldCO2Data = await APIPromise.json();
+    const worldCO2Data = await promise.json();
     // console.log(worldCO2Data);
     return worldCO2Data;
   }
@@ -15,24 +15,24 @@ function createWorldMap(error, countries, continentNames) {
 
   // Population data
   let populations = countries.map(countryObj => parseInt(countryObj.Population));
-  let populationRange = [Math.min(...popsulations), Math.max(...populations)];
+  let populationRange = [Math.min(...populations), Math.max(...populations)];
   
 
   let continents = d3.set(countries.map(countryObj => countryObj.ContinentCode));
 
   function continentColorScale(continentCode) {
     if (continentCode === "AF") {
-      return "green";
+      return "#2274A5";
     } else if (continentCode === "AS") {
-      return "blue";
+      return "#F1C40F";
     } else if (continentCode === "EU") {
-      return "orange";
+      return "#F75C03";
     } else if (continentCode === "NA") {
-      return "red";
+      return "#D90368";
     } else if (continentCode === "OC") {
-      return "brown";
+      return "#6B2737";
     } else {
-      return "purple";
+      return "#00CC66";
     }
   }
   
@@ -75,6 +75,12 @@ function createWorldMap(error, countries, continentNames) {
   }
 
   function hoveredOver(country) {
+    var formatPopulation = d3.format(",");
+    var info = "";
+      if (country) {
+        info = [country.CountryName, formatPopulation(country.Population)].join(": ");
+      }
+      d3.select("#country-info").html(info);
   }
 
   let forces;
