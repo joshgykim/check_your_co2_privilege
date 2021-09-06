@@ -1,167 +1,183 @@
-function createBubbleChart(error, countries, continentNames) {
-    var populations = countries.map(function(country) { return +country.Population; });
-    var meanPopulation = d3.mean(populations),
-        populationExtent = d3.extent(populations),
-        populationScaleX,
-        populationScaleY;
+function createWorldMap(error, countries, continentNames) {
+
+  async function getData() {
+    const promise = await fetch("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.json");
+    if (!promise.ok) {
+      throw new Error("API not available");
+    }
+
+    const worldCO2Data = await APIPromise.json();
+    // console.log(worldCO2Data);
+    return worldCO2Data;
+  }
+
+  console.log(getData());
+
+  // Population data
+  let populations = countries.map(countryObj => parseInt(countryObj.Population));
+  let populationRange = [Math.min(...popsulations), Math.max(...populations)];
   
-    var continents = d3.set(countries.map(function(country) { return country.ContinentCode; }));
-    var continentColorScale = d3.scaleOrdinal(d3.schemeCategory10)
-          .domain(continents.values());
+
+  let continents = d3.set(countries.map(countryObj => countryObj.ContinentCode));
+
+  function continentColorScale(continentCode) {
+    if (continentCode === "AF") {
+      return "green";
+    } else if (continentCode === "AS") {
+      return "blue";
+    } else if (continentCode === "EU") {
+      return "orange";
+    } else if (continentCode === "NA") {
+      return "red";
+    } else if (continentCode === "OC") {
+      return "brown";
+    } else {
+      return "purple";
+    }
+  }
   
-    var width = 1200,
-        height = 800;
-    var svg,
-        circles,
-        circleSize = { min: 10, max: 80 };
-    var circleRadiusScale = d3.scaleSqrt()
-      .domain(populationExtent)
-      .range([circleSize.min, circleSize.max]);
+
+  // Creating canvas(svg) element for worldMap
+  let mapWidth = 1200;
+  let mapHeight = 800;
+  let worldMap = d3.select("#bubble-chart")
+    .append("svg")
+    .attr("width", mapWidth)
+    .attr("height", mapHeight);
+
+
+  // Populating worldMap with circle elements
+  let circleSize = {min: 10, max: 80};
+
+  let circleRadiusScale = d3.scaleSqrt()
+    .domain(populationRange)
+    .range([circleSize.min, circleSize.max]);
+
+  let circles = worldMap.selectAll("circle")
+    .data(countries)
+    .enter()
+      .append("circle")
+      .attr("r", country => circleRadiusScale(country.Population))
+      .on("mouseover", function(d) {
+        hoveredOver(d);
+      })
+      .on("mouseout", function(d) {
+        hoveredOver();
+      });
   
-    var forces,
-        forceSimulation;
+  colorCircles();
+
+  function colorCircles() {
+    circles
+      .attr("fill", function(d) {
+        return continentColorScale(d.ContinentCode);
+      });
+  }
+
+  function hoveredOver(country) {
+  }
+
+  let forces;
+  let forceSimulation;
   
-    createSVG();
-    toggleContinentKey(!flagFill());
-    createCircles();
+  makeContinentLegend();
     createForces();
     createForceSimulation();
-    addFlagDefinitions();
     addFillListener();
     addGroupingListeners();
   
-    function createSVG() {
-      svg = d3.select("#bubble-chart")
-        .append("svg")
-          .attr("width", width)
-          .attr("height", height);
+    // function createSVG() {
+    //   svg = d3.select("#bubble-chart")
+    //     .append("svg")
+    //       .attr("width", mapWidth)
+    //       .attr("height", mapHeight);
+    // }
+  
+  function makeContinentLegend() {
+    let keyElementWidth = 150;
+    let keyElementHeight = 30;
+    let onScreenYOffset = keyElementHeight*1.5;
+    let offScreenYOffset = 100;
+
+    if (d3.select(".continent-key").empty()) {
+      createContinentKey();
+    }
+
+    function createContinentKey() {
+      var keyWidth = keyElementWidth * continents.values().length;
+      var continentKeyScale = d3.scaleBand()
+        .domain(continents.values())
+        .range([(mapWidth - keyWidth) / 2, (mapWidth + keyWidth) / 2]);
+
+      worldMap.append("g")
+        .attr("class", "continent-key")
+        .attr("transform", "translate(0," + (mapHeight + offScreenYOffset) + ")")
+        .selectAll("g")
+        .data(continents.values())
+        .enter()
+          .append("g")
+            .attr("class", "continent-key-element");
+
+      d3.selectAll("g.continent-key-element")
+        .append("rect")
+          .attr("width", keyElementWidth)
+          .attr("height", keyElementHeight)
+          .attr("x", function(d) { return continentKeyScale(d); })
+          .attr("fill", function(d) { return continentColorScale(d); });
+
+      d3.selectAll("g.continent-key-element")
+        .append("text")
+          .attr("text-anchor", "middle")
+          .attr("x", function(d) { return continentKeyScale(d) + keyElementWidth/2; })
+          .text(function(d) { return continentNames[d]; });
+
+      // The text BBox has non-zero values only after rendering
+      d3.selectAll("g.continent-key-element text")
+          .attr("y", function(d) {
+            var textHeight = this.getBBox().height;
+            // The BBox.height property includes some extra height we need to remove
+            var unneededTextHeight = 4;
+            return ((keyElementHeight + textHeight) / 2) - unneededTextHeight;
+          });
     }
   
-    function toggleContinentKey(showContinentKey) {
-      var keyElementWidth = 150,
-          keyElementHeight = 30;
-      var onScreenYOffset = keyElementHeight*1.5,
-          offScreenYOffset = 100;
-  
-      if (d3.select(".continent-key").empty()) {
-        createContinentKey();
-      }
-      var continentKey = d3.select(".continent-key");
-  
-      if (showContinentKey) {
-        translateContinentKey("translate(0," + (height - onScreenYOffset) + ")");
-      } else {
-        translateContinentKey("translate(0," + (height + offScreenYOffset) + ")");
-      }
-  
-      function createContinentKey() {
-        var keyWidth = keyElementWidth * continents.values().length;
-        var continentKeyScale = d3.scaleBand()
-          .domain(continents.values())
-          .range([(width - keyWidth) / 2, (width + keyWidth) / 2]);
-  
-        svg.append("g")
-          .attr("class", "continent-key")
-          .attr("transform", "translate(0," + (height + offScreenYOffset) + ")")
-          .selectAll("g")
-          .data(continents.values())
-          .enter()
-            .append("g")
-              .attr("class", "continent-key-element");
-  
-        d3.selectAll("g.continent-key-element")
-          .append("rect")
-            .attr("width", keyElementWidth)
-            .attr("height", keyElementHeight)
-            .attr("x", function(d) { return continentKeyScale(d); })
-            .attr("fill", function(d) { return continentColorScale(d); });
-  
-        d3.selectAll("g.continent-key-element")
-          .append("text")
-            .attr("text-anchor", "middle")
-            .attr("x", function(d) { return continentKeyScale(d) + keyElementWidth/2; })
-            .text(function(d) { return continentNames[d]; });
-  
-        // The text BBox has non-zero values only after rendering
-        d3.selectAll("g.continent-key-element text")
-            .attr("y", function(d) {
-              var textHeight = this.getBBox().height;
-              // The BBox.height property includes some extra height we need to remove
-              var unneededTextHeight = 4;
-              return ((keyElementHeight + textHeight) / 2) - unneededTextHeight;
-            });
-      }
-  
-      function translateContinentKey(translation) {
-        continentKey
-          .transition()
-          .duration(500)
-          .attr("transform", translation);
-      }
+    function translateContinentKey(translation) {
+      d3.select(".continent-key")
+        .transition()
+        .duration(500)
+        .attr("transform", translation);
     }
-  
-    function flagFill() {
-      return isChecked("#flags");
-    }
+
+    translateContinentKey("translate(0," + (mapHeight - onScreenYOffset) + ")");
+  }
   
     function isChecked(elementID) {
       return d3.select(elementID).property("checked");
     }
   
-    function createCircles() {
-      var formatPopulation = d3.format(",");
-      circles = svg.selectAll("circle")
-        .data(countries)
-        .enter()
-          .append("circle")
-          .attr("r", function(d) { return circleRadiusScale(d.Population); })
-          .on("mouseover", function(d) {
-            updateCountryInfo(d);
-          })
-          .on("mouseout", function(d) {
-            updateCountryInfo();
-          });
-      updateCircles();
-  
-      function updateCountryInfo(country) {
-        var info = "";
-        if (country) {
-          info = [country.CountryName, formatPopulation(country.Population)].join(": ");
-        }
-        d3.select("#country-info").html(info);
-      }
-    }
-  
-    function updateCircles() {
-      circles
-        .attr("fill", function(d) {
-          return flagFill() ? "url(#" + d.CountryCode + ")" : continentColorScale(d.ContinentCode);
-        });
-    }
+
   
     function createForces() {
       var forceStrength = 0.05;
   
       forces = {
-        combine:        createCombineForces(),
         countryCenters: createCountryCenterForces(),
         continent:      createContinentForces(),
-        population:     createPopulationForces()
       };
   
-      function createCombineForces() {
-        return {
-          x: d3.forceX(width / 2).strength(forceStrength),
-          y: d3.forceY(height / 2).strength(forceStrength)
-        };
-      }
+      // function createCombineForces() {
+      //   return {
+      //     x: d3.forceX(width / 2).strength(forceStrength),
+      //     y: d3.forceY(height / 2).strength(forceStrength)
+      //   };
+      // }
   
       function createCountryCenterForces() {
         var projectionStretchY = 0.25,
             projectionMargin = circleSize.max,
             projection = d3.geoEquirectangular()
-              .scale((width / 2 - projectionMargin) / Math.PI)
-              .translate([width / 2, height * (1 - projectionStretchY) / 2]);
+              .scale((mapWidth / 2 - projectionMargin) / Math.PI)
+              .translate([mapWidth / 2, mapHeight * (1 - projectionStretchY) / 2]);
   
         return {
           x: d3.forceX(function(d) {
@@ -181,28 +197,28 @@ function createBubbleChart(error, countries, continentNames) {
   
         function continentForceX(d) {
           if (d.ContinentCode === "EU") {
-            return left(width);
+            return left(mapWidth);
           } else if (d.ContinentCode === "AF") {
-            return left(width);
+            return left(mapWidth);
           } else if (d.ContinentCode === "AS") {
-            return right(width);
+            return right(mapWidth);
           } else if (d.ContinentCode === "NA" || d.ContinentCode === "SA") {
-            return right(width);
+            return right(mapWidth);
           }
-          return center(width);
+          return center(mapWidth);
         }
   
         function continentForceY(d) {
           if (d.ContinentCode === "EU") {
-            return top(height);
+            return top(mapHeight);
           } else if (d.ContinentCode === "AF") {
-            return bottom(height);
+            return bottom(mapHeight);
           } else if (d.ContinentCode === "AS") {
-            return top(height);
+            return top(mapHeight);
           } else if (d.ContinentCode === "NA" || d.ContinentCode === "SA") {
-            return bottom(height);
+            return bottom(mapHeight);
           }
-          return center(height);
+          return center(mapHeight);
         }
   
         function left(dimension) { return dimension / 4; }
@@ -212,36 +228,36 @@ function createBubbleChart(error, countries, continentNames) {
         function bottom(dimension) { return dimension / 4 * 3; }
       }
   
-      function createPopulationForces() {
-        var continentNamesDomain = continents.values().map(function(continentCode) {
-          return continentNames[continentCode];
-        });
-        var scaledPopulationMargin = circleSize.max;
+      // function createPopulationForces() {
+      //   var continentNamesDomain = continents.values().map(function(continentCode) {
+      //     return continentNames[continentCode];
+      //   });
+      //   var scaledPopulationMargin = circleSize.max;
   
-        populationScaleX = d3.scaleBand()
-          .domain(continentNamesDomain)
-          .range([scaledPopulationMargin, width - scaledPopulationMargin*2]);
-        populationScaleY = d3.scaleLog()
-          .domain(populationExtent)
-          .range([height - scaledPopulationMargin, scaledPopulationMargin*2]);
+      //   populationScaleX = d3.scaleBand()
+      //     .domain(continentNamesDomain)
+      //     .range([scaledPopulationMargin, width - scaledPopulationMargin*2]);
+      //   populationScaleY = d3.scaleLog()
+      //     .domain(populationRange)
+      //     .range([height - scaledPopulationMargin, scaledPopulationMargin*2]);
   
-        var centerCirclesInScaleBandOffset = populationScaleX.bandwidth() / 2;
-        return {
-          x: d3.forceX(function(d) {
-              return populationScaleX(continentNames[d.ContinentCode]) + centerCirclesInScaleBandOffset;
-            }).strength(forceStrength),
-          y: d3.forceY(function(d) {
-            return populationScaleY(d.Population);
-          }).strength(forceStrength)
-        };
-      }
+      //   var centerCirclesInScaleBandOffset = populationScaleX.bandwidth() / 2;
+      //   return {
+      //     x: d3.forceX(function(d) {
+      //         return populationScaleX(continentNames[d.ContinentCode]) + centerCirclesInScaleBandOffset;
+      //       }).strength(forceStrength),
+      //     y: d3.forceY(function(d) {
+      //       return populationScaleY(d.Population);
+      //     }).strength(forceStrength)
+      //   };
+      // }
   
     }
   
     function createForceSimulation() {
       forceSimulation = d3.forceSimulation()
-        .force("x", forces.combine.x)
-        .force("y", forces.combine.y)
+        .force("x", forces.countryCenters.x)
+        .force("y", forces.countryCenters.y)
         .force("collide", d3.forceCollide(forceCollide));
       forceSimulation.nodes(countries)
         .on("tick", function() {
@@ -252,58 +268,55 @@ function createBubbleChart(error, countries, continentNames) {
     }
   
     function forceCollide(d) {
-      return countryCenterGrouping() || populationGrouping() ? 0 : circleRadiusScale(d.Population) + 1;
+      return countryCenterGrouping() ? 0 : circleRadiusScale(d.Population) + 1;
     }
   
     function countryCenterGrouping() {
       return isChecked("#country-centers");
     }
   
-    function populationGrouping() {
-      return isChecked("#population");
-    }
+    // function populationGrouping() {
+    //   return isChecked("#population");
+    // }
   
-    function addFlagDefinitions() {
-      var defs = svg.append("defs");
-      defs.selectAll(".flag")
-        .data(countries)
-        .enter()
-          .append("pattern")
-          .attr("id", function(d) { return d.CountryCode; })
-          .attr("class", "flag")
-          .attr("width", "100%")
-          .attr("height", "100%")
-          .attr("patternContentUnits", "objectBoundingBox")
-            .append("image")
-            .attr("width", 1)
-            .attr("height", 1)
-            // xMidYMid: center the image in the circle
-            // slice: scale the image to fill the circle
-            .attr("preserveAspectRatio", "xMidYMid slice")
-            .attr("xlink:href", function(d) {
-              return "flags/" + d.CountryCode + ".svg";
-            });
-    }
+    // function addFlagDefinitions() {
+    //   var defs = svg.append("defs");
+    //   defs.selectAll(".flag")
+    //     .data(countries)
+    //     .enter()
+    //       .append("pattern")
+    //       .attr("id", function(d) { return d.CountryCode; })
+    //       .attr("class", "flag")
+    //       .attr("width", "100%")
+    //       .attr("height", "100%")
+    //       .attr("patternContentUnits", "objectBoundingBox")
+    //         .append("image")
+    //         .attr("width", 1)
+    //         .attr("height", 1)
+    //         // xMidYMid: center the image in the circle
+    //         // slice: scale the image to fill the circle
+    //         .attr("preserveAspectRatio", "xMidYMid slice")
+    //         .attr("xlink:href", function(d) {
+    //           return "flags/" + d.CountryCode + ".svg";
+    //         });
+    // }
   
     function addFillListener() {
       d3.selectAll('input[name="fill"]')
         .on("change", function() {
-          toggleContinentKey(!flagFill() && !populationGrouping());
+          toggleContinentKey();
           updateCircles();
         });
     }
   
     function addGroupingListeners() {
-      addListener("#combine",         forces.combine);
       addListener("#country-centers", forces.countryCenters);
       addListener("#continents",      forces.continent);
-      addListener("#population",      forces.population);
   
       function addListener(selector, forces) {
         d3.select(selector).on("click", function() {
           updateForces(forces);
-          toggleContinentKey(!flagFill() && !populationGrouping());
-          togglePopulationAxes(populationGrouping());
+          toggleContinentKey();
         });
       }
   
@@ -316,54 +329,54 @@ function createBubbleChart(error, countries, continentNames) {
           .restart();
       }
   
-      function togglePopulationAxes(showAxes) {
-        var onScreenXOffset = 40,
-            offScreenXOffset = -40;
-        var onScreenYOffset = 40,
-            offScreenYOffset = 100;
+      // function togglePopulationAxes(showAxes) {
+      //   var onScreenXOffset = 40,
+      //       offScreenXOffset = -40;
+      //   var onScreenYOffset = 40,
+      //       offScreenYOffset = 100;
   
-        if (d3.select(".x-axis").empty()) {
-          createAxes();
-        }
-        var xAxis = d3.select(".x-axis"),
-            yAxis = d3.select(".y-axis");
+      //   if (d3.select(".x-axis").empty()) {
+      //     createAxes();
+      //   }
+      //   var xAxis = d3.select(".x-axis"),
+      //       yAxis = d3.select(".y-axis");
   
-        if (showAxes) {
-          translateAxis(xAxis, "translate(0," + (height - onScreenYOffset) + ")");
-          translateAxis(yAxis, "translate(" + onScreenXOffset + ",0)");
-        } else {
-          translateAxis(xAxis, "translate(0," + (height + offScreenYOffset) + ")");
-          translateAxis(yAxis, "translate(" + offScreenXOffset + ",0)");
-        }
+      //   if (showAxes) {
+      //     translateAxis(xAxis, "translate(0," + (height - onScreenYOffset) + ")");
+      //     translateAxis(yAxis, "translate(" + onScreenXOffset + ",0)");
+      //   } else {
+      //     translateAxis(xAxis, "translate(0," + (height + offScreenYOffset) + ")");
+      //     translateAxis(yAxis, "translate(" + offScreenXOffset + ",0)");
+      //   }
   
-        function createAxes() {
-          var numberOfTicks = 10,
-              tickFormat = ".0s";
+      //   function createAxes() {
+      //     var numberOfTicks = 10,
+      //         tickFormat = ".0s";
   
-          var xAxis = d3.axisBottom(populationScaleX)
-            .ticks(numberOfTicks, tickFormat);
+      //     var xAxis = d3.axisBottom(populationScaleX)
+      //       .ticks(numberOfTicks, tickFormat);
   
-          svg.append("g")
-            .attr("class", "x-axis")
-            .attr("transform", "translate(0," + (height + offScreenYOffset) + ")")
-            .call(xAxis)
-            .selectAll(".tick text")
-              .attr("font-size", "16px");
+      //     svg.append("g")
+      //       .attr("class", "x-axis")
+      //       .attr("transform", "translate(0," + (height + offScreenYOffset) + ")")
+      //       .call(xAxis)
+      //       .selectAll(".tick text")
+      //         .attr("font-size", "16px");
   
-          var yAxis = d3.axisLeft(populationScaleY)
-            .ticks(numberOfTicks, tickFormat);
-          svg.append("g")
-            .attr("class", "y-axis")
-            .attr("transform", "translate(" + offScreenXOffset + ",0)")
-            .call(yAxis);
-        }
+      //     var yAxis = d3.axisLeft(populationScaleY)
+      //       .ticks(numberOfTicks, tickFormat);
+      //     svg.append("g")
+      //       .attr("class", "y-axis")
+      //       .attr("transform", "translate(" + offScreenXOffset + ",0)")
+      //       .call(yAxis);
+      //   }
   
-        function translateAxis(axis, translation) {
-          axis
-            .transition()
-            .duration(500)
-            .attr("transform", translation);
-        }
-      }
+      //   function translateAxis(axis, translation) {
+      //     axis
+      //       .transition()
+      //       .duration(500)
+      //       .attr("transform", translation);
+      //   }
+      // }
     }
 }
