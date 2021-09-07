@@ -36,7 +36,7 @@
             "goods_clothing": 2.09,
             "goods_furniture": 1.24,
             "goods_other": 2.50,
-            "services": 5.03,
+            "services": 5.03
         },
         "<40k": {
             "travel_car_fuel": 15.25,
