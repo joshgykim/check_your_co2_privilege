@@ -42,7 +42,7 @@ function createWorldMap(error, countries, continentNames) {
       return countryObj.data.co2 ? countryObj.data.co2 : 0
     });
     CO2PerCapitas = worldCO2Data.map(countryObj => {
-      return countryObj.data.co2_per_capita ? countryObj.data.co2_per_capita : 0
+      return countryObj.data.co2_per_capita ? countryObj.data.co2_per_capita ** 1.5 : 0
     });
     console.log(worldCO2Data.sort(function compareCO2pc(obj1, obj2){
       if (obj1.data.co2_per_capita > obj2.data.co2_per_capita) {
@@ -51,8 +51,8 @@ function createWorldMap(error, countries, continentNames) {
         return -1;
       }
     }))
-
-    addFillListener();
+    addFillListeners();
+    addGroupingListeners();
 
     // Configure fetched data to a usable format
     function filterData(CO2data) {
@@ -116,9 +116,10 @@ function createWorldMap(error, countries, continentNames) {
 
   // Update circle radius based on mode
   function updateCircleRadius(dataArr, selector) {
+    console.log(`Updated radius to match ${selector}`);
     let dataArrRange = [Math.min(...dataArr), Math.max(...dataArr)];
     let circleSizeRange = circleSizes(selector);
-    let updateRadiusScale = d3.scaleSqrt()
+    circleRadiusScale = d3.scaleSqrt()
       .domain(dataArrRange)
       .range(circleSizeRange);
 
@@ -137,8 +138,13 @@ function createWorldMap(error, countries, continentNames) {
       .duration(1000)
       .attr("r", data => {
         let index = countries.indexOf(data);
-        return updateRadiusScale(dataArr[index]);
+        return circleRadiusScale(dataArr[index]);
       })
+
+    if (!countryCenterGrouping()) {
+      updateForces(forces.continent);
+    }
+
   }
 
   // Create Continent Key
@@ -205,18 +211,11 @@ function createWorldMap(error, countries, continentNames) {
         .attr("transform", translation);
     }
   }
-  
-  function isChecked(elementID) {
-    return d3.select(elementID).property("checked");
-  }
-
 
   let forces;
   let forceSimulation;
   createForces();
   createForceSimulation();
-  addGroupingListeners();
-
   
   function createForces() {
     forces = {
@@ -254,12 +253,12 @@ function createWorldMap(error, countries, continentNames) {
       };
     }
   
-      function createContinentForces() {
-        return {
-          x: d3.forceX(continentForceX).strength(MAPVARIABLES.forceStrength),
-          y: d3.forceY(continentForceY).strength(MAPVARIABLES.forceStrength)
-        };
-  
+    function createContinentForces() {
+      return {
+        x: d3.forceX(continentForceX).strength(MAPVARIABLES.forceStrength),
+        y: d3.forceY(continentForceY).strength(MAPVARIABLES.forceStrength)
+      };
+
       function continentForceX(d) {
         if (d.ContinentCode === "EU") {
           return center(mapWidth);
@@ -298,63 +297,83 @@ function createWorldMap(error, countries, continentNames) {
       function rightCenter(dimension) { return dimension / 4 * 3}
     }
   
-    }
+  }
   
-    function createForceSimulation() {
-      forceSimulation = d3.forceSimulation()
-        .force("x", forces.countryCenters.x)
-        .force("y", forces.countryCenters.y)
-        .force("collide", d3.forceCollide(forceCollide));
-      forceSimulation.nodes(countries)
-        .on("tick", function() {
-          circles
-            .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
-        });
-    }
-  
-    function forceCollide(d) {
-      return countryCenterGrouping() ?  0 : circleRadiusScale(d.Population);
-    }
-    function countryCenterGrouping() {
-      return isChecked("#country-centers");
-    }
-
-
-
-
-    function addFillListener() {
-      d3.select("#population").on("click", function() {
-        updateCircleRadius(populations, "#population")
+  function createForceSimulation() {
+    console.log("created simulation");
+    forceSimulation = d3.forceSimulation()
+      .force("x", forces.countryCenters.x)
+      .force("y", forces.countryCenters.y)
+      .force("collide", d3.forceCollide(forceCollide));
+    forceSimulation.nodes(countries)
+      .on("tick", function() {
+        circles
+          .attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
       });
-      d3.select("#CO2").on("click", function () {
-        updateCircleRadius(CO2s, "#CO2")
-      });
-      d3.select("#CO2-per-capita").on("click", function() {
-        updateCircleRadius(CO2PerCapitas, "#CO2-per-capita")
-      });
-    }
+  }
+  
+  function forceCollide(d) {
+    return countryCenterGrouping() ?  0 : findRadius(d);
+  }
+  function countryCenterGrouping() {
+    return isChecked("#country-centers");
+  }
+  function isChecked(elementID) {
+    return d3.select(elementID).property("checked");
+  }
 
-  
-    function addGroupingListeners() {
-      addListener("#country-centers", forces.countryCenters);
-      addListener("#continents",      forces.continent);
-  
-      function addListener(selector, forces) {
-        d3.select(selector).on("click", function() {
-          updateForces(forces);
-        });
-      }
-  
-      function updateForces(forces) {
-        forceSimulation
-          .force("x", forces.x)
-          .force("y", forces.y)
-          .force("collide", d3.forceCollide(forceCollide))
-          .alphaTarget(0.5)
-          .restart();
+  function findRadius(d) {
+    if (isChecked("#population")) {
+      return circleRadiusScale(d.Population);
+
+    } else {
+      let index = countries.indexOf(d);
+      if (isChecked("#CO2")) {
+        return circleRadiusScale(CO2s[index]);
+      } else {
+        return circleRadiusScale(CO2PerCapitas[index]);
       }
     }
+  }
+
+  // BELOW THIS LINE IS CALLED IN THE ASYNC FUNCTION //
+
+  function addFillListeners() {
+    console.log("added fill listeners");
+    d3.select("#population").on("click", function() {
+      updateCircleRadius(populations, "#population")
+    });
+    d3.select("#CO2").on("click", function () {
+      updateCircleRadius(CO2s, "#CO2")
+    });
+    d3.select("#CO2-per-capita").on("click", function() {
+      updateCircleRadius(CO2PerCapitas, "#CO2-per-capita")
+    });
+  }
+
+
+  function addGroupingListeners() {
+    console.log("added group listeners");
+    addListener("#country-centers", forces.countryCenters);
+    addListener("#continents", forces.continent);
+
+    function addListener(selector, forces) {
+      d3.select(selector).on("click", function() {
+        updateForces(forces);
+      });
+    }
+  }
+
+  function updateForces(forces) {
+    console.log("updating Forces");
+    forceSimulation
+      .force("x", forces.x)
+      .force("y", forces.y)
+      .force("collide", d3.forceCollide(forceCollide))
+      .alphaTarget(0.5)
+      .restart();
+  }
 
 
 }
