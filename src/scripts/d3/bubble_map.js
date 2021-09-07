@@ -135,7 +135,7 @@ function createWorldMap(error, countries, continentNames) {
 
     circles
       .transition()
-      .duration(1000)
+      .duration(1500)
       .attr("r", data => {
         let index = countries.indexOf(data);
         return circleRadiusScale(dataArr[index]);
@@ -374,6 +374,4 @@ function createWorldMap(error, countries, continentNames) {
       .alphaTarget(0.5)
       .restart();
   }
-
-
 }

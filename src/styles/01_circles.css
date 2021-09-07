@@ -28,6 +28,7 @@ html, body {
   
   svg {
     border: 1px solid #ddd;
+    background: rgb(249, 247, 237)
   }
   
   circle {
