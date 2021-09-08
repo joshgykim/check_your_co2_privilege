@@ -18,7 +18,7 @@ function createWorldMap(error, countries, continentNames) {
     circleSizeMax: 150,
     circleSizeMinCO2: 5,
     circleSizeMaxCO2: 150,
-    circleSizeMinCO2pc: 5,
+    circleSizeMinCO2pc: 5, //make sure to change on carbon_calc.js
     circleSizeMaxCO2pc: 80,
     forceStrength: 0.05,
     stretchXFactor: 1.2,
@@ -45,8 +45,10 @@ function createWorldMap(error, countries, continentNames) {
     CO2PerCapitas = worldCO2Data.map(countryObj => {
       return countryObj.data.co2_per_capita ? countryObj.data.co2_per_capita : 0
     });
+
     addFillListeners();
     addGroupingListeners();
+    addCalculatorListener();
 
     // Configure fetched data to a usable format
     function filterData(CO2data) {
@@ -347,8 +349,13 @@ function createWorldMap(error, countries, continentNames) {
       let index = countries.indexOf(d);
       if (isChecked("#CO2")) {
         return circleRadiusScale(CO2s[index]);
-      } else {
+
+      } else if (isChecked("#CO2-per-capita")) {
         return circleRadiusScale(CO2PerCapitas[index]);
+
+      } else {
+        let userEmission = d3.select("#user-CO2 > .CO2-text").property("id").slice(1);
+        return circleRadiusScale(parseFloat(userEmission));
       }
     }
   }
@@ -365,6 +372,27 @@ function createWorldMap(error, countries, continentNames) {
     d3.select("#CO2-per-capita").on("click", function() {
       updateCircleRadius(CO2PerCapitas, "#CO2-per-capita")
     });
+    d3.select("#CO2-equality").on("click", function() {
+      let userEmission = d3.select("#user-CO2 > .CO2-text").property("id").slice(1);
+      equalizeCircleRadius(parseFloat(userEmission));
+    })
+  }
+
+  function equalizeCircleRadius(userEmission) {
+    console.log(userEmission)
+    let CO2PerCapitasRange = [Math.min(...CO2PerCapitas), Math.max(...CO2PerCapitas)]
+    circleRadiusScale = d3.scaleSqrt()
+      .domain(CO2PerCapitasRange)
+      .range([MAPVARIABLES.circleSizeMinCO2pc, MAPVARIABLES.circleSizeMaxCO2pc]);
+
+    circles
+      .transition()
+      .duration(2000)
+      .attr("r", circleRadiusScale(userEmission))
+    
+    if (!countryCenterGrouping()) {
+      updateForces(forces.continent);
+    }
   }
 
 
@@ -377,6 +405,17 @@ function createWorldMap(error, countries, continentNames) {
         updateForces(forces);
       });
     }
+  }
+
+  function addCalculatorListener() {
+    d3.select("button#calculate")
+      .on("click.bar", function() {
+        d3.event.preventDefault();
+        if (isChecked("#CO2-equality")) {
+          let userEmission = d3.select("#user-CO2 > .CO2-text").property("id").slice(1);
+          equalizeCircleRadius(userEmission);
+        }
+      })
   }
 
   function updateForces(forces) {

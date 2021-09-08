@@ -43,9 +43,18 @@ html, body {
     fill: white;
   }
 
+  div#user-carbon-input-box {
+    width: 600px;
+  }
+
   div#user-carbon-input-box > label {
     display: block;
     font-size: 20px;
+  }
+
+  #calculate {
+    width: 100px;
+    margin: 10px 20px;
   }
 
   input[type="range"] {
@@ -79,16 +88,19 @@ html, body {
 #user-carbon {
   display: flex;
   flex-direction: column;
-  align-items:stretch;
+  justify-content:space-evenly;
+  flex-direction: row;
 }
 
 #user-carbon-input {
-  display: inline;
-  margin: 0% 30%;
+  display: flex;
+  flex-direction: column;
+  margin: 0% 0%;
 }
 
 form {
-  display:block;
+  display:flex;
+  flex-direction: column;
 }
 
 #controls > div {
@@ -110,4 +122,16 @@ form {
 
 #bubble-chart > svg {
   background: rgb(249, 247, 237)
+}
+
+#user-carbon-result {
+  display: flex;
+  flex-direction: column;
+  justify-content:space-evenly;
+}
+
+#user-carbon-result > span {
+  margin: auto;
+  display: flex;
+  flex-direction: row;
 }

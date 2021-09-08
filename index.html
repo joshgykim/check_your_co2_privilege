@@ -39,9 +39,20 @@
                         </div>
                     </label>
                 </div>
-
                 <button id="calculate">Calculate</button>
             </form>
+        </section>
+        <section id="user-carbon-result">
+            <span id="household-CO2">
+                <p>Your household CO2:</p>
+                <p class="CO2-text"></p>
+                <p> tons CO2/year</p>
+            </span>
+            <span id="user-CO2">
+                <p>Your individual CO2:</p>
+                <p class="CO2-text"></p>
+                <p>tons CO2/year</p>
+            </span>
         </section>
     </section>
     <section id="user-carbon-graph">
@@ -60,6 +71,7 @@
             <label><input id="population" type="radio" name="fill" value="colors" checked>Population</label>
             <label><input id="CO2" type="radio" name="fill" value="colors">CO2 per country</label>
             <label><input id="CO2-per-capita" type="radio" name="fill" value="colors">CO2 per capita</label>
+            <label><input id="CO2-equality" type="radio" name="fill" value="colors">CO2 Equality</label>
         </div>
     </div>
 

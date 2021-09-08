@@ -7,6 +7,37 @@ function createCarbonCalculator(error, calculatorJSON) {
     servicesColor: "#95A5B2",
   }
 
+  // let CO2PerCapitas;
+  // getCO2PerCapitasData();
+
+  // async function getCO2PerCapitasData() {
+  //   const promise = await fetch("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.json");
+  //   if (!promise.ok) {
+  //     throw new Error("API not available");
+  //   }
+
+  //   let CO2Data = filterData(await promise.json());
+  //   CO2PerCapitas = CO2Data.map(countryObj => {
+  //     return countryObj.data.co2_per_capita ? countryObj.data.co2_per_capita : 0
+  //   });
+
+  //   function filterData(CO2data) {
+  //     let countriesCO2 = [];
+  //     let countryCO2Names = Object.keys(CO2data);
+  //     countryCO2Names.forEach( name => {
+  //       if (CO2data[name].iso_code && name != "World") {
+  //         let dataArr = CO2data[name].data;
+  //         let countryCO2Obj = {
+  //           Countryname: name,
+  //           data: dataArr[(dataArr.length-1)]
+  //         }
+  //         countriesCO2.push(countryCO2Obj);
+  //       }
+  //     })
+  //     return countriesCO2
+  //   }
+  // }
+
   let sizeLabels = ["avg(2.5)", "1", "2", "3", "4", "5+"];
   let incomeLabels = ["avg", "<20k", "<40k", "<60k", "<80k", "<100k", "100k+"]
   let calculatedData = calculatorJSON["2.5"]["average"];  
@@ -37,6 +68,20 @@ function createCarbonCalculator(error, calculatorJSON) {
 
   makeSliderLabels("#household-size-labels");
   makeSliderLabels("#household-income-labels");
+  showUserCO2("0", "0");
+
+  function showUserCO2(size, income) {
+    const reducer = (acc, val) => acc + val;
+    let householdData = calculatorJSON[translateHousehold(size)][translateIncome(income)];
+    let householdEmission =  (Object.values(householdData).reduce(reducer)).toFixed(2);
+    let userEmission = (householdEmission / parseInt(translateHousehold(size))).toFixed(2);
+
+    d3.select("#household-CO2 > .CO2-text").html(`  ${householdEmission} `)
+    d3.select("#user-CO2 > .CO2-text")
+      .attr("id", `e${userEmission}`)
+      .html(`  ${userEmission} `)
+  }
+  
 
   let canvasWidth = 1600;
   let canvasHeight = 1000;
@@ -154,7 +199,24 @@ function createCarbonCalculator(error, calculatorJSON) {
 
 
 
+  function translateHousehold(input) {
+    if (input === "0") return "2.5"
+    if (input === "1") return "1"
+    if (input === "2") return "2"
+    if (input === "3") return "3"
+    if (input === "4") return "4"
+    if (input === "5") return "5"
+  }
 
+  function translateIncome(input) {
+    if (input === "0") return "average"
+    if (input === "1") return "<20k"
+    if (input === "2") return "<40k"
+    if (input === "3") return "<60k"
+    if (input === "4") return "<80k"
+    if (input === "5") return "<100k"
+    if (input === "6") return "100k+"
+  }
 
   function calculateTotalCO2(zip, householdInput, incomeInput) {
 
@@ -162,31 +224,12 @@ function createCarbonCalculator(error, calculatorJSON) {
     let incomeKey = translateIncome(incomeInput);
     let breakdown = calculatorJSON[householdKey][incomeKey];
 
-    function translateHousehold(input) {
-      if (input === "0") return "2.5"
-      if (input === "1") return "1"
-      if (input === "2") return "2"
-      if (input === "3") return "3"
-      if (input === "4") return "4"
-      if (input === "5") return "5"
-    }
-
-    function translateIncome(input) {
-      if (input === "0") return "average"
-      if (input === "1") return "<20k"
-      if (input === "2") return "<40k"
-      if (input === "3") return "<60k"
-      if (input === "4") return "<80k"
-      if (input === "5") return "<100k"
-      if (input === "6") return "100k+"
-    }
-
     return breakdown;
   }
 
   // click "calculate"
   d3.select("button#calculate")
-    .on("click", function() {
+    .on("click.foo", function() {
       d3.event.preventDefault();
       let zipcodeInput = d3.select("#zipcode-input");
       let zipcode = zipcodeInput.property("value");
@@ -199,9 +242,7 @@ function createCarbonCalculator(error, calculatorJSON) {
 
       calculatedData = calculateTotalCO2(zipcode, householdSize, income);
       updateBars();
+      showUserCO2(householdSize, income);
     });
-
-  // const reducer = (acc, val) => acc + val;
-  // let CO2Emission = Object.values(breakdown).reduce(reducer)/parseInt(householdKey);
   
 }
