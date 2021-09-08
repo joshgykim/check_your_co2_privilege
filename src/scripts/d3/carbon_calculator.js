@@ -97,6 +97,7 @@ function createCarbonCalculator(error, calculatorJSON) {
   let canvasLowerB = canvasHeight - boundMargin;
   let xOffset = (canvasWidth - (barSpacing * 5)) / 2 +
                 (barSpacing-barWidth) / 2;
+  let reducer = (acc, val) => acc + val;
 
   function categorizeData(data) {
     let travelArr = findCO2s("travel");
@@ -123,26 +124,36 @@ function createCarbonCalculator(error, calculatorJSON) {
   
 
   function createBars() {
+    // Y-AXIS
+    graphCanvas
+      .append("line")
+      .attr("id", "y-axis")
+      .attr("x1", `${xOffset - 40}`)
+      .attr("y1", `${canvasLowerB}`)
+      .attr("x2", `${xOffset - 40}`)
+      .attr("y2", `${canvasUpperB}`)
+      .attr("stroke", "#7E8287")
+      .attr("stroke-width", "2px")
+
+    // X-RULER LINES
+    for (let b = 0; b < 5; b++) {
+      graphCanvas
+        .append("line")
+        .attr("class", "ruler")
+        .attr("id", `r${b}`)
+        .attr("x1", `${xOffset - 40}`)
+        .attr("y1", `${canvasLowerB}`)
+        .attr("x2", `${barSpacing * 6 + 45}`)
+        .attr("y2", `${canvasLowerB} `)
+        .attr("stroke", "#a2a6aa")
+        .attr("stroke-width", "1px")
+        .attr("stroke-dasharray", "20,10")
+    }
+
+    // BARS
     let barsData = categorizeData(calculatedData);
     for (let j = 0; j < barsData.length; j++) {
-      let categoryData = barsData[j];
-      let maxCO2 = 30;
-      let reducer = (acc, val) => acc + val;
-      let difference = maxCO2 - categoryData.reduce(reducer);
-      let categoryDataPos = accum(categoryData, difference);
-      let barScale = d3.scaleLinear()
-        .domain([0, maxCO2])
-        .range([canvasUpperB, canvasLowerB]);
-
-      function accum (testArr, difference) {
-        let returnArr = [difference]
-        for (let i = 1; i < testArr.length; i++) {
-          returnArr.push(testArr[i] + returnArr[returnArr.length-1])
-        }
-        return returnArr
-      }
-
-      for (let i = 0; i < categoryDataPos.length-1; i++) {
+      for (let i = 0; i < barsData[j].length-1; i++) {
         graphCanvas
           .append("rect")
           .attr("id", `rect${j}rect${i}`)
@@ -153,6 +164,17 @@ function createCarbonCalculator(error, calculatorJSON) {
           .attr("fill", assignColor(j))
       }
     }
+
+    // X-AXIS
+    graphCanvas
+      .append("line")
+      .attr("x1", `${xOffset - 40}`)
+      .attr("y1", `${canvasLowerB}`)
+      .attr("x2", `${barSpacing * 6 + 45}`)
+      .attr("y2", `${canvasLowerB}`)
+      .attr("stroke", "#7E8287")
+      .attr("stroke-width", "3px")
+
   }
 
   function assignColor(j) {
@@ -165,15 +187,15 @@ function createCarbonCalculator(error, calculatorJSON) {
   
   function updateBars() {
     let barsData = categorizeData(calculatedData);
-    for (let j = 0; j < barsData.length; j++) {
-      let categoryData = barsData[j];
-      let maxCO2 = 30;
-      let reducer = (acc, val) => acc + val;
-      let difference = maxCO2 - categoryData.reduce(reducer);
-      let categoryDataPos = accum(categoryData, difference);
-      let barScale = d3.scaleLinear()
+    let maxCO2 = Math.max(...barsData.map( category => category.reduce(reducer) ));
+    let barScale = d3.scaleLinear()
         .domain([0, maxCO2])
         .range([canvasUpperB, canvasLowerB]);
+
+    for (let j = 0; j < barsData.length; j++) {
+      let categoryData = barsData[j];
+      let difference = maxCO2 - categoryData.reduce(reducer);
+      let categoryDataPos = accum(categoryData, difference);
 
       function accum (testArr, difference) {
         let returnArr = [difference]

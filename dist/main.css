@@ -55,7 +55,7 @@ html, body {
     font-family: sans-serif;
     margin: auto;
     display: flex;
-    flex-direction: column;
+    flex-direction:  column;
   }
   
   #controls {
@@ -84,7 +84,7 @@ html, body {
   }
   
   svg {
-    background: #7E8287
+    background: rgb(249, 247, 237)
   }
   
   circle {
