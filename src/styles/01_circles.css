@@ -1,6 +1,4 @@
 html, body {
-    margin: 10px;
-    padding: 0;
     font-family: sans-serif;
   }
   
@@ -19,23 +17,68 @@ html, body {
   }
   
   #country-info {
-    color: #666;
-    font-size: 28px;
+    font-weight: bold;
+    font-size: 24px;
     position: absolute;
-    top: 60px;
+    top: 100px;
     left: 40px;
   }
   
   svg {
-    border: 1px solid #ddd;
     background: rgb(249, 247, 237)
   }
   
   circle {
     stroke: white;
-    stroke-width: 1.5;
+    stroke-width: 1;
   }
   
   .continent-key-element text {
     fill: white;
   }
+
+  div#user-carbon-input-box > label {
+    display: block;
+    font-size: 20px;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    padding: 20px 0px;
+  }
+
+  #household-size-labels, #household-income-labels {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .slider-tick-container {
+    cursor: pointer;
+    width: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#bubble-chart {
+  display: flex;
+  justify-content:center;
+}
+
+#user-carbon {
+  display: flex;
+  align-items:center;
+}
+
+#user-carbon-input {
+  margin: auto;
+}
+
+form {
+  display:block;
+}

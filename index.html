@@ -11,18 +11,45 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-queue.v3.min.js"></script>
     <script src="src/scripts/d3/bubble_map.js"></script>
+    <script src="src/scripts/d3/carbon_calculator.js"></script>
     <script src="./dist/main.js"></script>
     <title>Check Your CO2 Privilege!</title>
 </head>
 
 <body>
-    <div id="user-carbon">
-    </div>
-    <h3>World Carbon</h3>
+    <section id="user-carbon">
+        <section id="user-carbon-input">
+            <form action="" method="GET">
+                <div id="user-carbon-input-box">
+                    <label>
+                        <input id="zipcode-input" type="text" value="">
+                    </label>
+
+                    <label>
+                        <input id="household-size-input" type="range" step="1" min="0" max="5" list="household-size-options" value="0">
+                        <div id="household-size-labels">
+                        </div>
+                    </label>
+
+                    <label>
+                        <input id="household-income-input" type="range" step="1" min="0" max="6" list="household-income-options" value="0">
+                        <div id="household-income-labels">
+                        </div>
+                    </label>
+                </div>
+
+                <button id="calculate">Calculate</button>
+            </form>
+        </section>
+        <section id="user-carbon-graph">
+
+        </section>
+    </section>
+
     <div id="controls">
         <span>
-            <label><input id="continents" type="radio" name="grouping" value="continents">Continents</label>
             <label><input id="country-centers" type="radio" name="grouping" value="country-centers" checked>Map</label>
+            <label><input id="continents" type="radio" name="grouping" value="continents">Continents</label>
         </span>
         <span>
             <label><input id="population" type="radio" name="fill" value="colors" checked>Population</label>
@@ -30,8 +57,20 @@
             <label><input id="CO2-per-capita" type="radio" name="fill" value="colors">CO2 per capita</label>
         </span>
     </div>
-    <div id="country-info"></div>
-    <div id="bubble-chart"></div>
+    <section id="bubble-chart">
+        <div id="country-info">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div> 
+    </section>
+
+    <script>
+        d3.queue()
+            .defer(d3.json, "https://raw.githubusercontent.com/joshgykim/check_your_co2_privilege/main/dist/assets/calculator-data.json")
+            .await(createCarbonCalculator);
+    </script>
 
     <script>
         d3.queue()

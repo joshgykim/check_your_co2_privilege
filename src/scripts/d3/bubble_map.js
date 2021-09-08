@@ -1,6 +1,6 @@
 function createWorldMap(error, countries, continentNames) {
   // Creating container element for worldMap
-  let mapWidth = 1500;
+  let mapWidth = 1600;
   let mapHeight = 1000;
   let worldMap = d3.select("#bubble-chart")
     .append("svg")
@@ -14,13 +14,15 @@ function createWorldMap(error, countries, continentNames) {
     "NAColor": "#D90368",
     "SAColor": "#00CC66",
     "OCColor": "#6B2737",
-    circleSizeMin: 10,
-    circleSizeMax: 120,
-    circleSizeMinCO2: 0,
+    circleSizeMin: 5,
+    circleSizeMax: 150,
+    circleSizeMinCO2: 5,
     circleSizeMaxCO2: 150,
-    circleSizeMinCO2pc: 0,
-    circleSizeMaxCO2pc: 120,
-    forceStrength: 0.05
+    circleSizeMinCO2pc: 5,
+    circleSizeMaxCO2pc: 80,
+    forceStrength: 0.05,
+    stretchXFactor: 1.2,
+    stretchYFactor: 1.5
   }
 
   // Fetch worldCO2Data from OWID API (Array of objects)
@@ -37,20 +39,13 @@ function createWorldMap(error, countries, continentNames) {
     }
 
     worldCO2Data = filterData(await promise.json());
-    console.log(worldCO2Data);
+    console.log(worldCO2Data)
     CO2s = worldCO2Data.map(countryObj => {
       return countryObj.data.co2 ? countryObj.data.co2 : 0
     });
     CO2PerCapitas = worldCO2Data.map(countryObj => {
-      return countryObj.data.co2_per_capita ? countryObj.data.co2_per_capita ** 1.5 : 0
+      return countryObj.data.co2_per_capita ? countryObj.data.co2_per_capita : 0
     });
-    console.log(worldCO2Data.sort(function compareCO2pc(obj1, obj2){
-      if (obj1.data.co2_per_capita > obj2.data.co2_per_capita) {
-        return 1;
-      } else {
-        return -1;
-      }
-    }))
     addFillListeners();
     addGroupingListeners();
 
@@ -106,12 +101,36 @@ function createWorldMap(error, countries, continentNames) {
     }
 
     function hoveredOver(data) {
-      let info = "";
       if (data) {
-        info = [data.CountryName, data.Population].join(": ");
+        let lines = makeCountryInfoLines(data);
+
+        d3.select("#country-info")
+          .selectAll("div")
+          .data(lines)
+            .text(line => line)
+            .attr("style", `color:${assignColor(data.ContinentCode)}`)
+
+      } else {
+        let lines = ["","","",""];
+        d3.select("#country-info")
+          .selectAll("div")
+            .data(lines)
+              .text(line => line);
       }
-      d3.select("#country-info").html(info);
+
+      function makeCountryInfoLines(data) {
+        var formatNumber = d3.format(",");
+        let index = countries.indexOf(data);
+
+        let dataName = `${data.CountryName}`;
+        let dataPopulation = `Population: ${formatNumber(data.Population)}`;
+        let dataCO2 = `CO2: ${formatNumber(CO2s[index].toFixed(2))}`;
+        let dataCO2PerCapita = `CO2 per capita: ${formatNumber(CO2PerCapitas[index].toFixed(2))}`
+
+        return [dataName, dataPopulation, dataCO2, dataCO2PerCapita];
+      }
     }
+
   }
 
   // Update circle radius based on mode
@@ -135,7 +154,7 @@ function createWorldMap(error, countries, continentNames) {
 
     circles
       .transition()
-      .duration(1500)
+      .duration(2000)
       .attr("r", data => {
         let index = countries.indexOf(data);
         return circleRadiusScale(dataArr[index]);
@@ -224,15 +243,15 @@ function createWorldMap(error, countries, continentNames) {
     };
 
     function createCountryCenterForces() {
-      let projectionStretchY = 0.05;
+      let projectionStretchY = 0.20;
       let projectionMargin = MAPVARIABLES.circleSizeMax;
       let projection = d3.geoEquirectangular()
           .scale((mapWidth / 2 - projectionMargin) / Math.PI)
-          .translate([mapWidth / 2, mapHeight * (1 - projectionStretchY) / 2]);
+          .translate([mapWidth / 2, mapHeight / 2]);
 
       function stretchMap(arr) {
-        let stretchXFactor = 1;
-        let stretchYFactor = 1.3;
+        let stretchXFactor = MAPVARIABLES.stretchXFactor;
+        let stretchYFactor = MAPVARIABLES.stretchYFactor;
 
         let differenceX = arr[0] - mapWidth/2;
         let differenceY = arr[1] - mapHeight/2;
