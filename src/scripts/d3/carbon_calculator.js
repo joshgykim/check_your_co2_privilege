@@ -136,7 +136,7 @@ function createCarbonCalculator(error, calculatorJSON) {
       .attr("stroke-width", "2px")
 
     // X-RULER LINES
-    for (let b = 0; b < 5; b++) {
+    for (let b = 0; b < 6; b++) {
       graphCanvas
         .append("line")
         .attr("class", "ruler")
@@ -146,8 +146,9 @@ function createCarbonCalculator(error, calculatorJSON) {
         .attr("x2", `${barSpacing * 6 + 45}`)
         .attr("y2", `${canvasLowerB} `)
         .attr("stroke", "#a2a6aa")
-        .attr("stroke-width", "1px")
-        .attr("stroke-dasharray", "20,10")
+        .attr("stroke-width", "3px")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-dasharray", "25,15")
     }
 
     // BARS
@@ -168,12 +169,12 @@ function createCarbonCalculator(error, calculatorJSON) {
     // X-AXIS
     graphCanvas
       .append("line")
-      .attr("x1", `${xOffset - 40}`)
+      .attr("x1", `${xOffset - 40 - 40}`)
       .attr("y1", `${canvasLowerB}`)
-      .attr("x2", `${barSpacing * 6 + 45}`)
+      .attr("x2", `${barSpacing * 6 + 45 + 40}`)
       .attr("y2", `${canvasLowerB}`)
       .attr("stroke", "#7E8287")
-      .attr("stroke-width", "3px")
+      .attr("stroke-width", "5px")
 
   }
 
@@ -188,10 +189,24 @@ function createCarbonCalculator(error, calculatorJSON) {
   function updateBars() {
     let barsData = categorizeData(calculatedData);
     let maxCO2 = Math.max(...barsData.map( category => category.reduce(reducer) ));
+    console.log(maxCO2);
     let barScale = d3.scaleLinear()
         .domain([0, maxCO2])
         .range([canvasUpperB, canvasLowerB]);
 
+    //UPDATE RULERS
+    for (let b = 0; b < 6; b++) {
+      let CO2Level = b * 5;
+      let difference = maxCO2 - CO2Level;
+
+      d3.select(`#r${b}`)
+        .transition()
+        .duration(2000)
+        .attr("y1", `${barScale(difference)}`)
+        .attr("y2", `${barScale(difference)}`)
+    }
+    
+    // UPDATE BARS
     for (let j = 0; j < barsData.length; j++) {
       let categoryData = barsData[j];
       let difference = maxCO2 - categoryData.reduce(reducer);
