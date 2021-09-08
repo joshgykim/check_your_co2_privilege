@@ -1,10 +1,16 @@
 html, body {
     font-family: sans-serif;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
   }
   
   #controls {
     font-size: 18px;
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction:row;
+    justify-content:space-evenly;
+    margin: 20px 0px;
   }
   
   input[type="radio"] {
@@ -25,7 +31,7 @@ html, body {
   }
   
   svg {
-    background: rgb(249, 247, 237)
+    background: #7E8287
   }
   
   circle {
@@ -67,18 +73,41 @@ html, body {
 
 #bubble-chart {
   display: flex;
-  justify-content:center;
+  justify-content: center;
 }
 
 #user-carbon {
   display: flex;
-  align-items:center;
+  flex-direction: column;
+  align-items:stretch;
 }
 
 #user-carbon-input {
-  margin: auto;
+  display: inline;
+  margin: 0% 30%;
 }
 
 form {
   display:block;
+}
+
+#controls > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-heading {
+  font-size: 40px;
+  margin: auto;
+  margin-bottom: 40px;
+  margin-top: 40px;
+}
+
+#user-carbon-graph rect {
+  stroke: white;
+  stroke-width: 2;
+}
+
+#bubble-chart > svg {
+  background: rgb(249, 247, 237)
 }

@@ -17,6 +17,8 @@
 </head>
 
 <body>
+    <h1 class="section-heading">CHECK YOUR CO2 PRIVILEGE!</h1>
+    
     <section id="user-carbon">
         <section id="user-carbon-input">
             <form action="" method="GET">
@@ -41,22 +43,26 @@
                 <button id="calculate">Calculate</button>
             </form>
         </section>
-        <section id="user-carbon-graph">
-
-        </section>
+    </section>
+    <section id="user-carbon-graph">
+        
     </section>
 
+    <h1 class="section-heading">HOW THE WORLD COMPARES...</h1>
     <div id="controls">
-        <span>
+        <div>
+            <h2>Arrange by</h2>
             <label><input id="country-centers" type="radio" name="grouping" value="country-centers" checked>Map</label>
             <label><input id="continents" type="radio" name="grouping" value="continents">Continents</label>
-        </span>
-        <span>
+        </div>
+        <div>
+            <h2>Data type</h2>
             <label><input id="population" type="radio" name="fill" value="colors" checked>Population</label>
             <label><input id="CO2" type="radio" name="fill" value="colors">CO2 per country</label>
             <label><input id="CO2-per-capita" type="radio" name="fill" value="colors">CO2 per capita</label>
-        </span>
+        </div>
     </div>
+
     <section id="bubble-chart">
         <div id="country-info">
             <div></div>

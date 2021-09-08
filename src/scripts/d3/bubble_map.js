@@ -8,12 +8,12 @@ function createWorldMap(error, countries, continentNames) {
     .attr("height", mapHeight);
 
   const MAPVARIABLES = {
-    "AFColor": "#2274A5",
-    "ASColor": "#F1C40F",
-    "EUColor": "#F75C03",
-    "NAColor": "#D90368",
-    "SAColor": "#00CC66",
-    "OCColor": "#6B2737",
+    "AFColor": "#C5E5B3",
+    "ASColor": "#F3DE8A",
+    "EUColor": "#EB9486",
+    "NAColor": "#7E7F9A",
+    "SAColor": "#97A7B3",
+    "OCColor": "#413941",
     circleSizeMin: 5,
     circleSizeMax: 150,
     circleSizeMinCO2: 5,
@@ -39,7 +39,6 @@ function createWorldMap(error, countries, continentNames) {
     }
 
     worldCO2Data = filterData(await promise.json());
-    console.log(worldCO2Data)
     CO2s = worldCO2Data.map(countryObj => {
       return countryObj.data.co2 ? countryObj.data.co2 : 0
     });
@@ -135,7 +134,6 @@ function createWorldMap(error, countries, continentNames) {
 
   // Update circle radius based on mode
   function updateCircleRadius(dataArr, selector) {
-    console.log(`Updated radius to match ${selector}`);
     let dataArrRange = [Math.min(...dataArr), Math.max(...dataArr)];
     let circleSizeRange = circleSizes(selector);
     circleRadiusScale = d3.scaleSqrt()
@@ -319,7 +317,6 @@ function createWorldMap(error, countries, continentNames) {
   }
   
   function createForceSimulation() {
-    console.log("created simulation");
     forceSimulation = d3.forceSimulation()
       .force("x", forces.countryCenters.x)
       .force("y", forces.countryCenters.y)
@@ -359,7 +356,6 @@ function createWorldMap(error, countries, continentNames) {
   // BELOW THIS LINE IS CALLED IN THE ASYNC FUNCTION //
 
   function addFillListeners() {
-    console.log("added fill listeners");
     d3.select("#population").on("click", function() {
       updateCircleRadius(populations, "#population")
     });
@@ -373,7 +369,6 @@ function createWorldMap(error, countries, continentNames) {
 
 
   function addGroupingListeners() {
-    console.log("added group listeners");
     addListener("#country-centers", forces.countryCenters);
     addListener("#continents", forces.continent);
 
@@ -385,7 +380,6 @@ function createWorldMap(error, countries, continentNames) {
   }
 
   function updateForces(forces) {
-    console.log("updating Forces");
     forceSimulation
       .force("x", forces.x)
       .force("y", forces.y)
