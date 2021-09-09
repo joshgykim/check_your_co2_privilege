@@ -295,7 +295,7 @@ form {
   background:white;
   color: #E26150;
   margin-bottom: 10px;
-  font-size: 20px;
+  font-size: 24px;
   font-weight:bold;
   padding: 5px 10px;
   border: #2d3a46;
@@ -368,12 +368,16 @@ form {
 	border-left: 25px solid #d5d9d4;
 	border-bottom: 0px solid transparent;
   position: absolute;
-  left: 95%;
+  left: 93%;
   top: 65%;
 }
 
 .ruler-marker {
   font-size: 15px;
+}
+
+.bubble-text {
+  font-size: 30px;
 }
 /*!*************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/index.scss ***!
