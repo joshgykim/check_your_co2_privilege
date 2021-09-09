@@ -269,9 +269,16 @@ form {
 }
 
 .CO2-text {
+  background:white;
+  color: #9e2515;
   margin-bottom: 10px;
   font-size: 24px;
+  font-weight:bold;
+  padding: 5px 10px;
+  border: #2d3a46;
+  border-radius: 2px;
 }
+
 /*!*************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/index.scss ***!
   \*************************************************************************************************************************************/
