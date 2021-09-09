@@ -38,18 +38,23 @@
             </form>
         </section>
 
-        <section id="user-carbon-result">
-            <span id="household-CO2">
-                <p class="result-category">Household CO2</p>
-                <p class="CO2-text"></p>
-                <p> tons CO2/year</p>
-            </span>
-            <span id="user-CO2">
-                <p class="result-category">Your CO2</p>
-                <p class="CO2-text"></p>
-                <p>tons CO2/year</p>
-            </span>
-        </section>
+        <div id="user-carbon-result-container">
+            <section id="user-carbon-result">
+                <span id="household-CO2">
+                    <p class="result-category">Household CO2</p>
+                    <p class="CO2-text"></p>
+                </span>
+                <span id="user-CO2">
+                    <p class="result-category">Your CO2</p>
+                    <p class="CO2-text"></p>
+                </span>
+                <span id="global-CO2">
+                    <p class="result-category">Global Avg CO2</p>
+                    <p class="CO2-text">7.21</p>
+                </span>
+            </section>
+            <p id="unit">(metric tonnes/year)</p>
+        </div>
 
         <div id="controls">
             <div>
@@ -57,13 +62,14 @@
                 <label><input id="population" type="radio" name="fill" value="colors" checked>Population</label>
                 <label><input id="CO2" type="radio" name="fill" value="colors">CO2 per country</label>
                 <label><input id="CO2-per-capita" type="radio" name="fill" value="colors">CO2 per capita</label>
-                <label><input id="CO2-equality" type="radio" name="fill" value="colors">CO2 Equality</label>
+                <label id="check-privilege"><input id="CO2-equality" type="radio" name="fill" value="colors">CHECK PRIVILEGE!</label>
             </div>
             <div>
                 <h2>Arrange by:</h2>
                 <label><input id="country-centers" type="radio" name="grouping" value="country-centers" checked>Map</label>
                 <label><input id="continents" type="radio" name="grouping" value="continents">Continents</label>
             </div>
+            <div class="triangle-right"></div>
         </div>
     </div>
 
@@ -74,8 +80,21 @@
 
 
         <ul id="socials">
-            <li></li>
-            <li></li>
+            <li>
+                <a href="https://github.com/joshgykim">
+                    <img src="" alt="Github" style="width:42px;height:42px">
+                </a>
+            </li>
+            <li>
+                <a href="https://www.joshkb.com">
+                    <img src="" alt="LinkedIn" style="width:42px;height:42px">
+                </a>
+            </li>
+            <li>
+                <a href="https://www.linkedin.com/in/josh-kimbiggs/">
+                    <img src="" alt="Personal" style="width:42px;height:42px">
+                </a>
+            </li>
             <li></li>
         </ul>
     </div>
@@ -100,13 +119,24 @@
             .defer(d3.json, "https://raw.githubusercontent.com/joshgykim/check_your_co2_privilege/main/dist/assets/calculator-data.json")
             .await(createCarbonCalculator);
     </script>
-
     <script>
         d3.queue()
             .defer(d3.csv, "https://raw.githubusercontent.com/joshgykim/check_your_co2_privilege/main/dist/assets/countries.csv")
             .defer(d3.json, "https://raw.githubusercontent.com/joshgykim/check_your_co2_privilege/main/dist/assets/continent-names.json")
             .await(createWorldMap);
     </script>
+    <div id="step1-instruction-container">
+        <p class="stepX">Step_01:</p>
+        <p class="instruction">Let's calculate your carbon footprint based on your household size
+            and household income.
+        </p>
+    </div>
+    <div id="step2-instruction-container">
+        <p class="stepX">Step_02:</p>
+        <p class="instruction">How does the world compare? See what it would look like if everyone
+            had your carbon privilege.
+        </p>
+    </div>
 </body>
 
 </html>

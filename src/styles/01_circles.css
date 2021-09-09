@@ -23,7 +23,7 @@ body > #sidebar {
 
 #page-title {
   margin: auto;
-  font-size: 50px;
+  font-size: 25px;
 }
 
 body > #sidebar > #socials {
@@ -43,11 +43,14 @@ body > #sidebar > #socials {
 }
   
 #controls {
-  width: 100%;
-  font-size: 18px;
+  background: #d5d9d4;
+  width: 75%;
+  font-size: 14px;
   display: flex;
   flex-direction:row;
-  justify-content:space-evenly;
+  justify-content:space-between;
+  border-radius: 5px;
+  position:relative;
 }
 
 input[type="radio"] {
@@ -96,7 +99,7 @@ div#user-carbon-input-box {
 div#user-carbon-input-box > label {
   padding-top: 5px;
   padding-bottom: 30px;
-  width: 85%;
+  width: 70%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -168,6 +171,8 @@ form {
 #controls > div {
   display: flex;
   flex-direction: column;
+  margin: 15px 15px;
+  color: black;
 }
 
 #user-carbon-graph rect {
@@ -187,9 +192,9 @@ form {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 100%;
+  width: 80%;
   margin-top: 60px;
-  margin-bottom: 100px;
+
 }
 
 #user-carbon-result > span {
@@ -212,14 +217,15 @@ form {
 }
 
 .result-category {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  font-size: 14px;
 }
 
 .CO2-text {
   background:white;
-  color: #9e2515;
+  color: #E26150;
   margin-bottom: 10px;
-  font-size: 24px;
+  font-size: 20px;
   font-weight:bold;
   padding: 5px 10px;
   border: #2d3a46;
@@ -228,4 +234,62 @@ form {
 
 #controls label {
   margin-top: 10px;
+}
+
+#step1-instruction-container {
+  position: absolute;
+  width: 28vw;
+  display: flex;
+  flex-direction: row;
+  justify-content:space-between;
+  top: 1.5vw;
+  left: 70vw;
+}
+
+#step2-instruction-container {
+  position: absolute;
+  width: 28vw;
+  display: flex;
+  flex-direction: row;
+  justify-content:space-between;
+  top: 835px;
+  left: 70vw;
+}
+
+.stepX {
+  font-size: 40px;
+  width: 20%;
+}
+
+.instruction {
+  font-size: 20px;
+  width:60%;
+}
+
+#user-carbon-result-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  margin-bottom: 90px;
+}
+
+#unit {
+  font-size: 10px;
+}
+
+#check-privilege {
+  color:#E26150;
+  font-weight: bold;
+}
+
+.triangle-right {
+	width: 0;
+	height: 0;
+	border-top: 20px solid transparent;
+	border-left: 25px solid #d5d9d4;
+	border-bottom: 0px solid transparent;
+  position: absolute;
+  left: 95%;
+  top: 65%;
 }

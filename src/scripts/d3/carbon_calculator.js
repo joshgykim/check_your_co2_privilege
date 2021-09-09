@@ -51,10 +51,14 @@ function createCarbonCalculator(error, calculatorJSON) {
     let householdEmission =  (Object.values(householdData).reduce(reducer)).toFixed(2);
     let userEmission = (householdEmission / parseInt(translateHousehold(size))).toFixed(2);
 
-    d3.select("#household-CO2 > .CO2-text").html(`  ${householdEmission} `)
+    d3.select("#household-CO2 > .CO2-text")
+      .attr("fill", "red")
+      .html(`  ${householdEmission} `)
     d3.select("#user-CO2 > .CO2-text")
       .attr("id", `e${userEmission}`)
+      .attr("fill", "red")
       .html(`  ${userEmission} `)
+
   }
   
 
