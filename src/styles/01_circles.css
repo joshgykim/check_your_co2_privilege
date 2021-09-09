@@ -43,11 +43,11 @@ body > #sidebar > #socials {
 }
   
 #controls {
+  width: 100%;
   font-size: 18px;
   display: flex;
   flex-direction:row;
   justify-content:space-evenly;
-  margin: 20px 0px;
 }
 
 input[type="radio"] {
@@ -224,4 +224,8 @@ form {
   padding: 5px 10px;
   border: #2d3a46;
   border-radius: 2px;
+}
+
+#controls label {
+  margin-top: 10px;
 }
