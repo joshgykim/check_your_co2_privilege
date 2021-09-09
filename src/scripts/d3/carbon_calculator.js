@@ -242,7 +242,7 @@ function createCarbonCalculator(error, calculatorJSON) {
           .attr("width", barWidth)
           .attr("height", height)
         
-        if (height > 30) {
+        if (height > 32) {
           setTimeout(() => {
             graphCanvas
               .append("text")

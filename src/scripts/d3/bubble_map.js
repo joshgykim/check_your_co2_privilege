@@ -14,12 +14,18 @@ function createWorldMap(error, countries, continentNames) {
     "NAColor": "#7E7F9A",
     "SAColor": "#97A7B3",
     "OCColor": "#413941",
+    "AFSelectedColor": "#97D076",
+    "ASSelectedColor": "#E7BF23",
+    "EUSelectedColor": "#E26150",
+    "NASelectedColor": "#515267",
+    "SASelectedColor": "#718798",
+    "OCSelectedColor": "#2C262C",
     circleSizeMin: 5,
     circleSizeMax: 150,
     circleSizeMinCO2: 5,
     circleSizeMaxCO2: 150,
-    circleSizeMinCO2pc: 5, //make sure to change on carbon_calc.js
-    circleSizeMaxCO2pc: 80,
+    circleSizeMinCO2pc: 2, //make sure to change on carbon_calc.js
+    circleSizeMaxCO2pc: 60,
     forceStrength: 0.05,
     stretchXFactor: 1.2,
     stretchYFactor: 1.5
@@ -77,7 +83,10 @@ function createWorldMap(error, countries, continentNames) {
   // Populate worldMap with circle elements
   let circles;
   let circleRadiusScale;
-  let assignColor = function(continentCode) {
+  let assignColor = function(continentCode, selected=false) {
+    if (selected) {
+      return MAPVARIABLES[continentCode + "SelectedColor"]
+    }
     return MAPVARIABLES[continentCode + "Color"]
   }
   createCircles();
@@ -93,25 +102,33 @@ function createWorldMap(error, countries, continentNames) {
       .enter()
         .append("circle")
         .attr("r", country => circleRadiusScale(country.Population))
-        .on("mouseover", data => hoveredOver(data))
-        .on("mouseout", data => hoveredOver())
+        .on("mouseover", data => hoveredOver(data, true))
+        .on("mouseout", data => hoveredOver(data, false))
     colorCircles();
 
     function colorCircles() {
       circles.attr("fill", data => assignColor(data.ContinentCode));
     }
 
-    function hoveredOver(data) {
-      if (data) {
+    function hoveredOver(data, hovered) {
+
+      if (hovered) {
         let lines = makeCountryInfoLines(data);
+        let index = countries.indexOf(data);
+        d3.select(`circle:nth-of-type(${index+1})`)
+        .attr("fill", assignColor(countries[index].ContinentCode, true))
 
         d3.select("#country-info")
           .selectAll("div")
           .data(lines)
             .text(line => line)
-            .attr("style", `color:${assignColor(data.ContinentCode)}`)
+            .attr("style", `color:${assignColor(data.ContinentCode, true)}`)
+            .attr("text-anchor", "right")
 
       } else {
+        let index = countries.indexOf(data);
+        d3.select(`circle:nth-of-type(${index+1})`)
+        .attr("fill", assignColor(countries[index].ContinentCode))
         let lines = ["","","",""];
         d3.select("#country-info")
           .selectAll("div")
@@ -125,8 +142,8 @@ function createWorldMap(error, countries, continentNames) {
 
         let dataName = `${data.CountryName}`;
         let dataPopulation = `Population: ${formatNumber(data.Population)}`;
-        let dataCO2 = `CO2: ${formatNumber(CO2s[index].toFixed(2))}`;
-        let dataCO2PerCapita = `CO2 per capita: ${formatNumber(CO2PerCapitas[index].toFixed(2))}`
+        let dataCO2 = `CO2: ${formatNumber(CO2s[index].toFixed(2))} t CO2/year`;
+        let dataCO2PerCapita = `CO2 per capita: ${formatNumber(CO2PerCapitas[index].toFixed(2))} t CO2/year`
 
         return [dataName, dataPopulation, dataCO2, dataCO2PerCapita];
       }
@@ -210,8 +227,8 @@ function createWorldMap(error, countries, continentNames) {
 
       d3.selectAll("g.continent-key-element")
         .append("text")
-          .attr("text-anchor", "left")
-          .attr("x", data => continentKeyScale(data)+ 20)
+          .attr("text-anchor", "middle")
+          .attr("x", data => continentKeyScale(data)+ 70 )
           .text(data => continentNames[data]);
 
       d3.selectAll("g.continent-key-element text")
@@ -256,7 +273,7 @@ function createWorldMap(error, countries, continentNames) {
         let differenceX = arr[0] - mapWidth/2;
         let differenceY = arr[1] - mapHeight/2;
 
-        let newX = mapWidth/2 + differenceX * stretchXFactor;
+        let newX = mapWidth/2 + differenceX * stretchXFactor - 50;
         let newY = mapHeight/2 + differenceY * stretchYFactor;
 
         return [newX, newY];
@@ -280,15 +297,15 @@ function createWorldMap(error, countries, continentNames) {
 
       function continentForceX(d) {
         if (d.ContinentCode === "EU") {
-          return center(mapWidth);
+          return center(mapWidth)-70;
         } else if (d.ContinentCode === "AF") {
-          return center(mapWidth);
+          return center(mapWidth)-70;
         } else if (d.ContinentCode === "AS") {
-          return rightCenter(mapWidth);
+          return rightCenter(mapWidth)-70;
         } else if (d.ContinentCode === "NA") {
-          return left(mapWidth);
+          return left(mapWidth)-70;
         } else if (d.ContinentCode === "SA") {
-          return left(mapWidth);
+          return left(mapWidth)-70;
         }
         return rightCenter(mapWidth);
       }
@@ -309,7 +326,7 @@ function createWorldMap(error, countries, continentNames) {
       }
 
       function left(dimension) { return dimension / 4; }
-      function center(dimension) { return dimension / 2 }
+      function center(dimension) { return dimension / 2}
       function top(dimension) { return dimension / 5; }
       function topCenter(dimension) { return dimension / 5 * 2; }
       function bottom(dimension) { return dimension / 4 * 3; }
