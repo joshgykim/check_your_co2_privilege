@@ -1,5 +1,7 @@
 # **Check Your CO2 Privilege**
 
+[Live Demo](https://joshgykim.github.io/check_your_co2_privilege/)
+
 ### **Overview**
 
 Preventing a climate crisis is as much a geopolitical and social issue as it is an environmental issue. The problems we face are fundamentally interdependent on one another and therefore must be addressed as such. "Check Your CO2 Privilege!" is a project that helps us estimate our very own carbon footprint based on our location and income level and visualize what it means in the global context. We will be able to see how our carbon habits compare to those with different cultural backgrounds, such as nationality and socioeconomic status. What would the world look like if everyone emitted the same level of CO2 as us? What can we do to fight carbon inequality? The intent of this project is to not only educate but also encourgage the users to work together in dealing with this global threat.
