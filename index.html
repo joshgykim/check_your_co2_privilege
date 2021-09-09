@@ -17,16 +17,10 @@
 </head>
 
 <body>
-    <h1 class="section-heading">CHECK YOUR CO2 PRIVILEGE!</h1>
-    
-    <section id="user-carbon">
+    <div id="sidebar-fixed">
         <section id="user-carbon-input">
             <form action="" method="GET">
                 <div id="user-carbon-input-box">
-                    <label>
-                        <input id="zipcode-input" type="text" value="">
-                    </label>
-
                     <label>
                         <input id="household-size-input" type="range" step="1" min="0" max="5" list="household-size-options" value="0">
                         <div id="household-size-labels">
@@ -42,6 +36,7 @@
                 <button id="calculate">Calculate</button>
             </form>
         </section>
+
         <section id="user-carbon-result">
             <span id="household-CO2">
                 <p>Your household CO2:</p>
@@ -54,35 +49,49 @@
                 <p>tons CO2/year</p>
             </span>
         </section>
-    </section>
-    <section id="user-carbon-graph">
-        
-    </section>
 
-    <h1 class="section-heading">HOW THE WORLD COMPARES...</h1>
-    <div id="controls">
-        <div>
-            <h2>Arrange by</h2>
-            <label><input id="country-centers" type="radio" name="grouping" value="country-centers" checked>Map</label>
-            <label><input id="continents" type="radio" name="grouping" value="continents">Continents</label>
-        </div>
-        <div>
-            <h2>Data type</h2>
-            <label><input id="population" type="radio" name="fill" value="colors" checked>Population</label>
-            <label><input id="CO2" type="radio" name="fill" value="colors">CO2 per country</label>
-            <label><input id="CO2-per-capita" type="radio" name="fill" value="colors">CO2 per capita</label>
-            <label><input id="CO2-equality" type="radio" name="fill" value="colors">CO2 Equality</label>
+        <div id="controls">
+            <div>
+                <h2>Arrange by</h2>
+                <label><input id="country-centers" type="radio" name="grouping" value="country-centers" checked>Map</label>
+                <label><input id="continents" type="radio" name="grouping" value="continents">Continents</label>
+            </div>
+            <div>
+                <h2>Data type</h2>
+                <label><input id="population" type="radio" name="fill" value="colors" checked>Population</label>
+                <label><input id="CO2" type="radio" name="fill" value="colors">CO2 per country</label>
+                <label><input id="CO2-per-capita" type="radio" name="fill" value="colors">CO2 per capita</label>
+                <label><input id="CO2-equality" type="radio" name="fill" value="colors">CO2 Equality</label>
+            </div>
         </div>
     </div>
 
-    <section id="bubble-chart">
-        <div id="country-info">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div> 
-    </section>
+    <div id="sidebar">
+        <div id="page-title-container">
+            <hi id="page-title">CHECK YOUR CO2 PRIVILEGE!</h1>
+        </div>   
+
+
+        <ul id="socials">
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
+    <div id="visualizations">
+        <section id="user-carbon-graph">
+        </section>
+
+        <section id="bubble-chart">
+            <div id="country-info">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div> 
+        </section>
+    </div>
 
     <script>
         d3.queue()

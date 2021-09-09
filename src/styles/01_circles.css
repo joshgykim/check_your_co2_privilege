@@ -1,83 +1,116 @@
-html, body {
-    font-family: sans-serif;
-    margin: auto;
-    display: flex;
-    flex-direction:  column;
-  }
-  
-  #controls {
-    font-size: 18px;
-    display: flex;
-    flex-direction:row;
-    justify-content:space-evenly;
-    margin: 20px 0px;
-  }
-  
-  input[type="radio"] {
-    margin-top: -1px;
-    vertical-align: middle;
-  }
-  
-  span:nth-child(2) {
-    margin-left: 20px;
-  }
-  
-  #country-info {
-    font-weight: bold;
-    font-size: 24px;
-    position: absolute;
-    top: 100px;
-    left: 40px;
-  }
-  
-  svg {
-    background: rgb(249, 247, 237)
-  }
-  
-  circle {
-    stroke: white;
-    stroke-width: 1;
-  }
-  
-  .continent-key-element text {
-    fill: white;
-  }
+html {
+}
 
-  div#user-carbon-input-box {
-    width: 600px;
-  }
+body {
+  font-family: sans-serif;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+}
 
-  div#user-carbon-input-box > label {
-    display: block;
-    font-size: 20px;
-  }
+body > #sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content:space-between;
+}
 
-  #calculate {
-    width: 100px;
-    margin: 10px 20px;
-  }
+#page-title-container {
+  width: 27vw;
+  display: flex;
+}
 
-  input[type="range"] {
-    width: 100%;
-    padding: 20px 0px;
-  }
+#page-title {
+  margin: auto;
+}
 
-  #household-size-labels, #household-income-labels {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-left: 16px;
-    margin-right: 16px;
-  }
+body > #sidebar > #socials {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
 
-  .slider-tick-container {
-    cursor: pointer;
-    width: 25px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+#sidebar-fixed {
+  display: flex;
+  flex-direction: column;
+  justify-content:space-evenly;
+  position: fixed;
+  top: 20vw;
+  width: 27vw;
+}
+  
+#controls {
+  font-size: 18px;
+  display: flex;
+  flex-direction:row;
+  justify-content:space-evenly;
+  margin: 20px 0px;
+}
+
+input[type="radio"] {
+  margin-top: -1px;
+  vertical-align: middle;
+}
+
+span:nth-child(2) {
+  margin-left: 20px;
+}
+
+#country-info {
+  font-weight: bold;
+  font-size: 24px;
+  position: absolute;
+  top: 100px;
+  left: 40px;
+}
+
+svg {
+  background: rgb(249, 247, 237)
+}
+
+circle {
+  stroke: white;
+  stroke-width: 1;
+}
+
+.continent-key-element text {
+  fill: white;
+}
+
+div#user-carbon-input-box {
+  width: 27vw;
+  padding: 20px 0px;
+}
+
+div#user-carbon-input-box > label {
+  display: block;
+  font-size: 20px;
+}
+
+#calculate {
+  width: 100px;
+  margin: 10px 20px;
+}
+
+input[type="range"] {
+  width: 100%;
+}
+
+#household-size-labels, #household-income-labels {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.slider-tick-container {
+  cursor: pointer;
+  width: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #bubble-chart {
@@ -108,16 +141,13 @@ form {
   flex-direction: column;
 }
 
-.section-heading {
-  font-size: 40px;
-  margin: auto;
-  margin-bottom: 40px;
-  margin-top: 40px;
-}
-
 #user-carbon-graph rect {
   stroke: white;
   stroke-width: 2;
+}
+
+#user-carbon-graph rect#hidden {
+  stroke-width: 0;
 }
 
 #bubble-chart > svg {

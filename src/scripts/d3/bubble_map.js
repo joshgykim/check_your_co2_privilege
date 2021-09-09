@@ -1,10 +1,10 @@
 function createWorldMap(error, countries, continentNames) {
   // Creating container element for worldMap
-  let mapWidth = 1600;
-  let mapHeight = 1000;
+  let mapWidth = 1300;
+  let mapHeight = 800;
   let worldMap = d3.select("#bubble-chart")
     .append("svg")
-    .attr("width", mapWidth)
+    .attr("width", "72vw")
     .attr("height", mapHeight);
 
   const MAPVARIABLES = {

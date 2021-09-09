@@ -5,38 +5,12 @@ function createCarbonCalculator(error, calculatorJSON) {
     foodColor: "#767793",
     goodsColor: "#C5E5B3",
     servicesColor: "#95A5B2",
+    travelSelectedColor: "#E26150",
+    homeSelectedColor: "#E7BF23",
+    foodSelectedColor: "#515267",
+    goodsSelectedColor: "#97D076",
+    servicesSelectedColor: "#718798"
   }
-
-  // let CO2PerCapitas;
-  // getCO2PerCapitasData();
-
-  // async function getCO2PerCapitasData() {
-  //   const promise = await fetch("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.json");
-  //   if (!promise.ok) {
-  //     throw new Error("API not available");
-  //   }
-
-  //   let CO2Data = filterData(await promise.json());
-  //   CO2PerCapitas = CO2Data.map(countryObj => {
-  //     return countryObj.data.co2_per_capita ? countryObj.data.co2_per_capita : 0
-  //   });
-
-  //   function filterData(CO2data) {
-  //     let countriesCO2 = [];
-  //     let countryCO2Names = Object.keys(CO2data);
-  //     countryCO2Names.forEach( name => {
-  //       if (CO2data[name].iso_code && name != "World") {
-  //         let dataArr = CO2data[name].data;
-  //         let countryCO2Obj = {
-  //           Countryname: name,
-  //           data: dataArr[(dataArr.length-1)]
-  //         }
-  //         countriesCO2.push(countryCO2Obj);
-  //       }
-  //     })
-  //     return countriesCO2
-  //   }
-  // }
 
   let sizeLabels = ["avg(2.5)", "1", "2", "3", "4", "5+"];
   let incomeLabels = ["avg", "<20k", "<40k", "<60k", "<80k", "<100k", "100k+"]
@@ -84,20 +58,18 @@ function createCarbonCalculator(error, calculatorJSON) {
   }
   
 
-  let canvasWidth = 1600;
-  let canvasHeight = 1000;
+  let canvasHeight = 800;
   let graphCanvas = d3.select("#user-carbon-graph")
                       .append("svg")
-                      .attr("width", canvasWidth)
+                      .attr("width", "72vw")
                       .attr("height", canvasHeight);
 
-  let boundMargin = 100;
-  let barSpacing = 220;
-  let barWidth = 150;
+  let boundMargin = 80;
+  let barSpacing = 180;
+  let barWidth = 140;
   let canvasUpperB = boundMargin;
   let canvasLowerB = canvasHeight - boundMargin;
-  let xOffset = (canvasWidth - (barSpacing * 5)) / 2 +
-                (barSpacing-barWidth) / 2;
+  let xOffset = 200;
   let reducer = (acc, val) => acc + val;
 
   function categorizeData(data) {
@@ -137,17 +109,17 @@ function createCarbonCalculator(error, calculatorJSON) {
       .attr("stroke-width", "1.5px")
 
     // X-RULER LINES
-    for (let b = 0; b < 6; b++) {
+    for (let b = 0; b < 13; b++) {
       graphCanvas
         .append("line")
         .attr("class", "ruler")
         .attr("id", `r${b}`)
         .attr("x1", `${xOffset - 40}`)
         .attr("y1", `${canvasLowerB}`)
-        .attr("x2", `${barSpacing * 6 + 45}`)
+        .attr("x2", `${barSpacing * 6}`)
         .attr("y2", `${canvasLowerB} `)
         .attr("stroke", "#a2a6aa")
-        .attr("stroke-width", "2px")
+        .attr("stroke-width", "1px")
         .attr("stroke-dasharray", "15,10")
       
       if (b !== 0) {
@@ -158,9 +130,19 @@ function createCarbonCalculator(error, calculatorJSON) {
           .attr("x", `${xOffset - 60}`)
           .attr("y", `${canvasLowerB - 10}`)
           .attr("text-anchor", "end")
-          .text(`${b*5} t`)
+          .text(`${b*2.5} t`)
       }
     }
+
+    graphCanvas
+      .append("rect")
+      .attr("id", "hidden")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", "73vw")
+      .attr("height", boundMargin - 20)
+      .attr("fill", "rgb(249, 247, 237)")
+      .attr("stroke", "none")
 
     // BARS
     let barsData = categorizeData(calculatedData);
@@ -191,7 +173,7 @@ function createCarbonCalculator(error, calculatorJSON) {
       .append("line")
       .attr("x1", `${xOffset - 40 - 40}`)
       .attr("y1", `${canvasLowerB}`)
-      .attr("x2", `${barSpacing * 6 + 45 + 40}`)
+      .attr("x2", `${barSpacing * 6 + 40}`)
       .attr("y2", `${canvasLowerB}`)
       .attr("stroke", "#7E8287")
       .attr("stroke-width", "5px")
@@ -213,8 +195,8 @@ function createCarbonCalculator(error, calculatorJSON) {
         .range([canvasUpperB, canvasLowerB]);
 
     //UPDATE RULERS
-    for (let b = 0; b < 6; b++) {
-      let CO2Level = b * 5;
+    for (let b = 0; b < 13; b++) {
+      let CO2Level = b * 2.5;
       let difference = maxCO2 - CO2Level;
 
       d3.select(`#r${b}`)
@@ -260,7 +242,7 @@ function createCarbonCalculator(error, calculatorJSON) {
           .attr("width", barWidth)
           .attr("height", height)
         
-        if (height > 40) {
+        if (height > 30) {
           setTimeout(() => {
             graphCanvas
               .append("text")
@@ -275,13 +257,26 @@ function createCarbonCalculator(error, calculatorJSON) {
         }
       
         d3.selectAll(`#${id}`)
-          .on("mouseover", data => hoveredOver(categoryData[i+1], midpoint, [j, i]))
-          .on("mouseout", data => hoveredOver())
+          .on("mouseover", data => hoveredOver(id, categoryData[i+1], midpoint, [j, i]))
+          .on("mouseout", data => hoveredOver(id, null, midpoint, [j,i]))
       }
     }
   }
 
-  function hoveredOver(emission, midpoint, type) {
+  function assignSelectColor(id) {
+    let category = id[4];
+    if (category === "0") return GRAPHVARIABLES.travelSelectedColor;
+    if (category === "1") return GRAPHVARIABLES.homeSelectedColor;
+    if (category === "2") return GRAPHVARIABLES.foodSelectedColor;
+    if (category === "3") return GRAPHVARIABLES.goodsSelectedColor;
+    if (category === "4") return GRAPHVARIABLES.servicesSelectedColor;
+  }
+
+  function hoveredOver(id, emission, midpoint, type) {
+
+    d3.selectAll(`#${id}`)
+      .attr("fill", assignSelectColor(id))
+    
     if (emission) {
       graphCanvas
         .append("rect")
@@ -318,6 +313,8 @@ function createCarbonCalculator(error, calculatorJSON) {
     } else {
       d3.selectAll(".bubble").remove();
       d3.selectAll(".bubble-text").remove()
+      d3.select(`#${id}`)
+      .attr("fill", assignColor(parseInt(id[4])))
     }
   }
 
@@ -383,7 +380,7 @@ function createCarbonCalculator(error, calculatorJSON) {
     .on("click.foo", function() {
       d3.event.preventDefault();
       let zipcodeInput = d3.select("#zipcode-input");
-      let zipcode = zipcodeInput.property("value");
+      let zipcode = 0;
 
       let householdInput = d3.select("#household-size-input");
       let householdSize = householdInput.property("value");
