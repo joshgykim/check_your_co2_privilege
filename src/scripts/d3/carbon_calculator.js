@@ -92,7 +92,7 @@ function createCarbonCalculator(error, calculatorJSON) {
 
   let boundMargin = 100;
   let barSpacing = 220;
-  let barWidth = 180;
+  let barWidth = 150;
   let canvasUpperB = boundMargin;
   let canvasLowerB = canvasHeight - boundMargin;
   let xOffset = (canvasWidth - (barSpacing * 5)) / 2 +
@@ -133,7 +133,7 @@ function createCarbonCalculator(error, calculatorJSON) {
       .attr("x2", `${xOffset - 40}`)
       .attr("y2", `${canvasUpperB}`)
       .attr("stroke", "#7E8287")
-      .attr("stroke-width", "2px")
+      .attr("stroke-width", "1.5px")
 
     // X-RULER LINES
     for (let b = 0; b < 6; b++) {
@@ -147,7 +147,6 @@ function createCarbonCalculator(error, calculatorJSON) {
         .attr("y2", `${canvasLowerB} `)
         .attr("stroke", "#a2a6aa")
         .attr("stroke-width", "3px")
-        .attr("stroke-linecap", "round")
         .attr("stroke-dasharray", "25,15")
     }
 
@@ -189,7 +188,6 @@ function createCarbonCalculator(error, calculatorJSON) {
   function updateBars() {
     let barsData = categorizeData(calculatedData);
     let maxCO2 = Math.max(...barsData.map( category => category.reduce(reducer) ));
-    console.log(maxCO2);
     let barScale = d3.scaleLinear()
         .domain([0, maxCO2])
         .range([canvasUpperB, canvasLowerB]);
@@ -222,14 +220,45 @@ function createCarbonCalculator(error, calculatorJSON) {
 
       for (let i = 0; i < categoryDataPos.length-1; i++) {
         let id = `rect${j}rect${i}`
+        let x = j * barSpacing + xOffset;
+        let y = barScale(categoryDataPos[i]);
+        let height =  barScale(categoryData[i+1])-boundMargin;
+        let midpoint = [x + barWidth/2, y + height/2]
         d3.selectAll(`#${id}`)
           .transition()
           .duration(2000)
-          .attr("x", j * barSpacing + xOffset)
-          .attr("y", barScale(categoryDataPos[i]))
+          .attr("x", x)
+          .attr("y", y)
           .attr("width", barWidth)
-          .attr("height", barScale(categoryData[i+1])-boundMargin)
+          .attr("height", height)
+      
+        d3.selectAll(`#${id}`)
+          .on("mouseover", data => hoveredOver(categoryData[i+1], midpoint))
+          .on("mouseout", data => hoveredOver())
       }
+    }
+  }
+
+  function hoveredOver(emission, midpoint) {
+    if (emission) {
+      let pointsStr = makeBubblePointsStr(midpoint);
+      graphCanvas
+        .append("polyline")
+        .attr("points", pointsStr)
+        .attr("fill", "white")
+        .attr("stroke", "black")
+    } else {
+      d3.select("polyline").remove()
+    }
+
+    function makeBubblePointsStr(midpoint) {
+      let point1 = `${midpoint[0]},${midpoint[1]}`
+      let point2 = `${midpoint[0]+barWidth*1.3},${midpoint[1]}`
+      let point3 = `${midpoint[0]+barWidth*1.3},${midpoint[1]-100}`
+      let point4 = `${midpoint[0]+15},${midpoint[1]-100}`
+      let point5 = `${midpoint[0]+15},${midpoint[1]-15}`
+      let point6 = `${midpoint[0]},${midpoint[1]}`
+      return [point1, point2, point3, point4, point5, point6].join(" ")
     }
   }
 
