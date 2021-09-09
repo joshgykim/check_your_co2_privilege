@@ -211,7 +211,7 @@ function createWorldMap(error, countries, continentNames) {
       d3.selectAll("g.continent-key-element")
         .append("text")
           .attr("text-anchor", "left")
-          .attr("x", data => continentKeyScale(data))
+          .attr("x", data => continentKeyScale(data)+ 20)
           .text(data => continentNames[data]);
 
       d3.selectAll("g.continent-key-element text")

@@ -135,3 +135,10 @@ form {
   display: flex;
   flex-direction: row;
 }
+
+#user-carbon-graph .bubble {
+  stroke: black;
+  fill: white;
+  stroke-width: 1.5px
+
+}

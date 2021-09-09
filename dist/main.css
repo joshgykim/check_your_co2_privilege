@@ -188,6 +188,13 @@ form {
   display: flex;
   flex-direction: row;
 }
+
+#user-carbon-graph .bubble {
+  stroke: black;
+  fill: white;
+  stroke-width: 1.5px
+
+}
 /*!*************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/index.scss ***!
   \*************************************************************************************************************************************/

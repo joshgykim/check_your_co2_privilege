@@ -40,6 +40,7 @@ function createCarbonCalculator(error, calculatorJSON) {
 
   let sizeLabels = ["avg(2.5)", "1", "2", "3", "4", "5+"];
   let incomeLabels = ["avg", "<20k", "<40k", "<60k", "<80k", "<100k", "100k+"]
+  let xAxisLabel = ["TRAVEL", "HOME", "FOOD", "GOODS", "SERVICES"];
   let calculatedData = calculatorJSON["2.5"]["average"];  
 
   function makeSliderLabels(selector) {
@@ -146,13 +147,33 @@ function createCarbonCalculator(error, calculatorJSON) {
         .attr("x2", `${barSpacing * 6 + 45}`)
         .attr("y2", `${canvasLowerB} `)
         .attr("stroke", "#a2a6aa")
-        .attr("stroke-width", "3px")
-        .attr("stroke-dasharray", "25,15")
+        .attr("stroke-width", "2px")
+        .attr("stroke-dasharray", "15,10")
+      
+      if (b !== 0) {
+        graphCanvas
+          .append("text")
+          .attr("class", "ruler-marker")
+          .attr("id", `rm${b}`)
+          .attr("x", `${xOffset - 60}`)
+          .attr("y", `${canvasLowerB - 10}`)
+          .attr("text-anchor", "end")
+          .text(`${b*5} t`)
+      }
     }
 
     // BARS
     let barsData = categorizeData(calculatedData);
     for (let j = 0; j < barsData.length; j++) {
+      
+      graphCanvas
+        .append("text")
+        .attr("class", "x-axis-label")
+        .attr("text-anchor", "middle")
+        .attr("x", j * barSpacing + barWidth / 2 + xOffset)
+        .attr("y", canvasLowerB + 40)
+        .text(xAxisLabel[j])
+
       for (let i = 0; i < barsData[j].length-1; i++) {
         graphCanvas
           .append("rect")
@@ -174,7 +195,6 @@ function createCarbonCalculator(error, calculatorJSON) {
       .attr("y2", `${canvasLowerB}`)
       .attr("stroke", "#7E8287")
       .attr("stroke-width", "5px")
-
   }
 
   function assignColor(j) {
@@ -202,10 +222,18 @@ function createCarbonCalculator(error, calculatorJSON) {
         .duration(2000)
         .attr("y1", `${barScale(difference)}`)
         .attr("y2", `${barScale(difference)}`)
+
+      if (b !== 0) {
+        d3.select(`#rm${b}`)
+          .transition()
+          .duration(2000)
+          .attr("y", `${barScale(difference) + 7}`)
+      }
     }
     
     // UPDATE BARS
     for (let j = 0; j < barsData.length; j++) {
+      d3.selectAll(".bar-description").remove();
       let categoryData = barsData[j];
       let difference = maxCO2 - categoryData.reduce(reducer);
       let categoryDataPos = accum(categoryData, difference);
@@ -231,35 +259,92 @@ function createCarbonCalculator(error, calculatorJSON) {
           .attr("y", y)
           .attr("width", barWidth)
           .attr("height", height)
+        
+        if (height > 40) {
+          setTimeout(() => {
+            graphCanvas
+              .append("text")
+              .attr("class", "bar-description")
+              .attr("text-anchor", "middle")
+              .attr("x", midpoint[0])
+              .attr("y", midpoint[1]+7)
+              .attr("fill", "white")
+              .attr("font-weight", "bold")
+              .text(translateType([j, i]).toUpperCase())
+          }, 1700)
+        }
       
         d3.selectAll(`#${id}`)
-          .on("mouseover", data => hoveredOver(categoryData[i+1], midpoint))
+          .on("mouseover", data => hoveredOver(categoryData[i+1], midpoint, [j, i]))
           .on("mouseout", data => hoveredOver())
       }
     }
   }
 
-  function hoveredOver(emission, midpoint) {
+  function hoveredOver(emission, midpoint, type) {
     if (emission) {
-      let pointsStr = makeBubblePointsStr(midpoint);
+      graphCanvas
+        .append("rect")
+        .attr("class", "bubble")
+        .attr("x", midpoint[0]+50)
+        .attr("y", midpoint[1]-30)
+        .attr("ry", 10)
+        .attr("rx", 10)
+        .attr("width", barWidth)
+        .attr("height", 60)
+      
+      graphCanvas
+        .append("text")
+        .attr("class", "bubble-text")
+        .attr("text-anchor", "middle")
+        .attr("x", midpoint[0] + barWidth/2 + 50)
+        .attr("y", midpoint[1] + 17)
+        .text(emission + " t")
+      
+      graphCanvas
+        .append("text")
+        .attr("class", "bubble-text")
+        .attr("text-anchor", "middle")
+        .attr("x", midpoint[0] + barWidth/2 + 50)
+        .attr("y", midpoint[1] - 7)
+        .attr("fill", `${assignColor(type[0])}`)
+        .attr("font-weight", "bold")
+        .text(translateType(type).toUpperCase())
+
       graphCanvas
         .append("polyline")
-        .attr("points", pointsStr)
-        .attr("fill", "white")
-        .attr("stroke", "black")
+        .attr("class", "bubble")
+        .attr("points", `${midpoint[0]+51.5},${midpoint[1]+10} ${midpoint[0]+40},${midpoint[1]} ${midpoint[0]+51.5},${midpoint[1]-10}`)
     } else {
-      d3.select("polyline").remove()
+      d3.selectAll(".bubble").remove();
+      d3.selectAll(".bubble-text").remove()
+    }
+  }
+
+  function translateType(arr) {
+    let key = `${arr[0]},${arr[1]}`;
+
+    const translation = {
+      "0,0": "Car Fule",
+      "0,1": "Car MFG",
+      "0,2": "Car Air",
+      "1,0": "Electricity",
+      "1,1": "Natural Gas",
+      "1,2": "Other",
+      "1,3": "Water",
+      "1,4": "Construction",
+      "2,0": "Meat",
+      "2,1": "Dairy",
+      "2,2": "Fruits & Veg",
+      "2,3": "Cereals",
+      "2,4": "Other",
+      "3,0": "Clothing",
+      "3,1": "Furniture",
+      "3,2": "Other",
+      "4,0": "All Services"
     }
 
-    function makeBubblePointsStr(midpoint) {
-      let point1 = `${midpoint[0]},${midpoint[1]}`
-      let point2 = `${midpoint[0]+barWidth*1.3},${midpoint[1]}`
-      let point3 = `${midpoint[0]+barWidth*1.3},${midpoint[1]-100}`
-      let point4 = `${midpoint[0]+15},${midpoint[1]-100}`
-      let point5 = `${midpoint[0]+15},${midpoint[1]-15}`
-      let point6 = `${midpoint[0]},${midpoint[1]}`
-      return [point1, point2, point3, point4, point5, point6].join(" ")
-    }
+    return translation[key];
   }
 
 
