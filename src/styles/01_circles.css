@@ -12,6 +12,8 @@ body > #sidebar {
   display: flex;
   flex-direction: column;
   justify-content:space-between;
+  border-right: white;
+  border: 2px;
 }
 
 #page-title-container {
@@ -34,8 +36,9 @@ body > #sidebar > #socials {
   display: flex;
   flex-direction: column;
   justify-content:space-evenly;
+  align-items: center;
   position: fixed;
-  top: 20vw;
+  top: 15vw;
   width: 27vw;
 }
   
@@ -84,21 +87,39 @@ circle {
 
 div#user-carbon-input-box {
   width: 27vw;
-  padding: 20px 0px;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items:center;
 }
 
 div#user-carbon-input-box > label {
-  display: block;
-  font-size: 20px;
+  padding-top: 5px;
+  padding-bottom: 30px;
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
 }
 
-#calculate {
-  width: 100px;
-  margin: 10px 20px;
+button {
+  width: 120px;
+  background-color: #dadad8;
+  border: none;
+  border-radius: 20px;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  color: #485d6f;
+  font-weight:bold;
+  cursor: pointer;
 }
 
 input[type="range"] {
-  width: 100%;
+  width: 95%;
 }
 
 #household-size-labels, #household-income-labels {
@@ -141,6 +162,7 @@ input[type="range"] {
 form {
   display:flex;
   flex-direction: column;
+  align-items: center;
 }
 
 #controls > div {
@@ -163,14 +185,18 @@ form {
 
 #user-carbon-result {
   display: flex;
-  flex-direction: column;
-  justify-content:space-evenly;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 60px;
+  margin-bottom: 100px;
 }
 
 #user-carbon-result > span {
   margin: auto;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
 }
 
 #user-carbon-graph .bubble {
@@ -178,4 +204,18 @@ form {
   fill: white;
   stroke-width: 1.5px
 
+}
+
+#sidebar, #sidebar-fixed {
+  background: #485d6f;
+  color: white;
+}
+
+.result-category {
+  margin-bottom: 20px;
+}
+
+.CO2-text {
+  margin-bottom: 10px;
+  font-size: 24px;
 }
