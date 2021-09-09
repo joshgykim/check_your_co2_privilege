@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Knewave&display=swap');
+
 html {
 }
 
@@ -17,13 +19,19 @@ body > #sidebar {
 }
 
 #page-title-container {
+  font-family: 'Knewave';
   width: 27vw;
   display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #page-title {
-  margin: auto;
-  font-size: 25px;
+  font-size: 40px;
+  margin-top: 70px;
+  width: 100%;
+  text-align: center;
+  text-shadow: 5px 5px #27333d;
 }
 
 body > #sidebar > #socials {
@@ -257,12 +265,18 @@ form {
 }
 
 .stepX {
+  font-family: 'Knewave';
+  color: #2d3d49;
   font-size: 40px;
+  text-shadow: 2px 2px #e6e6e6;
   width: 20%;
 }
 
 .instruction {
+  font-family: 'Knewave';
+  color: #2d3d49;
   font-size: 20px;
+  text-shadow: 1px 1px #e6e6e6;
   width:60%;
 }
 

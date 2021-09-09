@@ -255,7 +255,7 @@ function createCarbonCalculator(error, calculatorJSON) {
               .attr("x", midpoint[0])
               .attr("y", midpoint[1]+7)
               .attr("fill", "white")
-              .attr("font-weight", "bold")
+              .attr("font-size", "14px")
               .text(translateType([j, i]).toUpperCase())
           }, 1700)
         }
