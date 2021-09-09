@@ -255,7 +255,7 @@ function createCarbonCalculator(error, calculatorJSON) {
               .attr("x", midpoint[0])
               .attr("y", midpoint[1]+7)
               .attr("fill", "white")
-              .attr("font-size", "14px")
+              .attr("font-size", "16px")
               .text(translateType([j, i]).toUpperCase())
           }, 1700)
         }
@@ -326,7 +326,7 @@ function createCarbonCalculator(error, calculatorJSON) {
     let key = `${arr[0]},${arr[1]}`;
 
     const translation = {
-      "0,0": "Car Fule",
+      "0,0": "Car Fuel",
       "0,1": "Car MFG",
       "0,2": "Car Air",
       "1,0": "Electricity",

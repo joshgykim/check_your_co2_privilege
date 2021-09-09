@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Knewave&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@600&display=swap');
 
 html {
 }
 
 body {
-  font-family: sans-serif;
+  font-family: 'Assistant', sans-serif;
   margin: auto;
   display: flex;
   flex-direction: row;
@@ -38,6 +39,7 @@ body > #sidebar > #socials {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+  margin-bottom: 20px;
 }
 
 #sidebar-fixed {
@@ -46,7 +48,7 @@ body > #sidebar > #socials {
   justify-content:space-evenly;
   align-items: center;
   position: fixed;
-  top: 15vw;
+  top: 13vw;
   width: 27vw;
 }
   
@@ -64,6 +66,7 @@ body > #sidebar > #socials {
 input[type="radio"] {
   margin-top: -1px;
   vertical-align: middle;
+  font-weight: 600;
 }
 
 span:nth-child(2) {
@@ -84,7 +87,8 @@ span:nth-child(2) {
 }
 
 svg {
-  background: rgb(249, 247, 237)
+  background: rgb(249, 247, 237);
+  border-top: solid 2px #485d6f;
 }
 
 circle {
@@ -285,16 +289,18 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center; 
-  margin-bottom: 90px;
+  margin-bottom: 120px;
 }
 
 #unit {
   font-size: 10px;
+  text-align:left;
 }
 
 #check-privilege {
-  color:#E26150;
+  color:#e64b36;
   font-weight: bold;
+  font-style:italic;
 }
 
 .triangle-right {
@@ -306,4 +312,8 @@ form {
   position: absolute;
   left: 95%;
   top: 65%;
+}
+
+.ruler-marker {
+  font-size: 15px;
 }
