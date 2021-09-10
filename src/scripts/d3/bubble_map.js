@@ -45,6 +45,7 @@ function createWorldMap(error, countries, continentNames) {
     }
 
     worldCO2Data = filterData(await promise.json());
+    console.log(worldCO2Data)
     CO2s = worldCO2Data.map(countryObj => {
       return countryObj.data.co2 ? countryObj.data.co2 : 0
     });
@@ -142,7 +143,7 @@ function createWorldMap(error, countries, continentNames) {
 
         let dataName = `${data.CountryName}`;
         let dataPopulation = `Population: ${formatNumber(data.Population)}`;
-        let dataCO2 = `CO2: ${formatNumber(CO2s[index].toFixed(2))} t CO2/year`;
+        let dataCO2 = `CO2: ${formatNumber(CO2s[index].toFixed(2))} million t CO2/year`;
         let dataCO2PerCapita = `CO2 per capita: ${formatNumber(CO2PerCapitas[index].toFixed(2))} t CO2/year`
 
         return [dataName, dataPopulation, dataCO2, dataCO2PerCapita];
