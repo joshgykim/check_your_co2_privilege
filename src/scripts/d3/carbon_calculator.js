@@ -65,12 +65,12 @@ function createCarbonCalculator(error, calculatorJSON) {
   let canvasHeight = 800;
   let graphCanvas = d3.select("#user-carbon-graph")
                       .append("svg")
-                      .attr("width", "72vw")
+                      .attr("width", "100%")
                       .attr("height", canvasHeight);
 
   let boundMargin = 80;
-  let barSpacing = 180;
-  let barWidth = 140;
+  let barSpacing = 160;
+  let barWidth = 120;
   let canvasUpperB = boundMargin;
   let canvasLowerB = canvasHeight - boundMargin;
   let xOffset = 200;
@@ -120,7 +120,7 @@ function createCarbonCalculator(error, calculatorJSON) {
         .attr("id", `r${b}`)
         .attr("x1", `${xOffset - 40}`)
         .attr("y1", `${canvasLowerB}`)
-        .attr("x2", `${barSpacing * 6}`)
+        .attr("x2", `${barSpacing * 6.2}`)
         .attr("y2", `${canvasLowerB} `)
         .attr("stroke", "#a2a6aa")
         .attr("stroke-width", "1px")
@@ -143,7 +143,7 @@ function createCarbonCalculator(error, calculatorJSON) {
       .attr("id", "hidden")
       .attr("x", 0)
       .attr("y", 0)
-      .attr("width", "73vw")
+      .attr("width", "100%")
       .attr("height", boundMargin - 20)
       .attr("fill", "rgb(249, 247, 237)")
       .attr("stroke", "none")

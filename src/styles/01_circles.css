@@ -9,19 +9,19 @@ body {
   margin: auto;
   display: flex;
   flex-direction: row;
+  overflow: auto;
 }
 
 body > #sidebar {
   display: flex;
   flex-direction: column;
-  justify-content:space-between;
   border-right: white;
   border: 2px;
 }
 
 #page-title-container {
   font-family: 'Knewave';
-  width: 27vw;
+  width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -38,7 +38,7 @@ body > #sidebar {
 body > #sidebar > #socials {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content:center;
   margin-bottom: 20px;
 }
 
@@ -49,7 +49,7 @@ body > #sidebar > #socials {
   align-items: center;
   position: fixed;
   top: 13vw;
-  width: 27vw;
+  width: 420px;
 }
   
 #controls {
@@ -102,7 +102,7 @@ circle {
 
 div#user-carbon-input-box {
   width: 27vw;
-  padding-top: 20px;
+  padding-top: 40px;
   display: flex;
   flex-direction: column;
   align-items:center;
@@ -178,6 +178,7 @@ form {
   display:flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 20px;
 }
 
 #controls > div {
@@ -250,22 +251,22 @@ form {
 
 #step1-instruction-container {
   position: absolute;
-  width: 28vw;
+  width: 500px;
   display: flex;
   flex-direction: row;
   justify-content:space-between;
   top: 1.5vw;
-  left: 70vw;
+  right: 2vw;
 }
 
 #step2-instruction-container {
   position: absolute;
-  width: 28vw;
+  width: 500px;
   display: flex;
   flex-direction: row;
   justify-content:space-between;
   top: 835px;
-  left: 70vw;
+  right: 2vw;
 }
 
 .stepX {
@@ -289,7 +290,7 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center; 
-  margin-bottom: 120px;
+  margin-bottom: 80px;
 }
 
 #unit {
@@ -320,4 +321,13 @@ form {
 
 .bubble-text {
   font-size: 17px;
+}
+
+#socials img {
+  filter: invert(1);
+  width: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 30px;
+  opacity: 0.8;
 }

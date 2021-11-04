@@ -1,10 +1,10 @@
 function createWorldMap(error, countries, continentNames) {
   // Creating container element for worldMap
-  let mapWidth = 1300;
+  let mapWidth = 1200;
   let mapHeight = 800;
   let worldMap = d3.select("#bubble-chart")
     .append("svg")
-    .attr("width", "72vw")
+    .attr("width", "100%")
     .attr("height", mapHeight);
 
   const MAPVARIABLES = {
@@ -45,7 +45,6 @@ function createWorldMap(error, countries, continentNames) {
     }
 
     worldCO2Data = filterData(await promise.json());
-    console.log(worldCO2Data)
     CO2s = worldCO2Data.map(countryObj => {
       return countryObj.data.co2 ? countryObj.data.co2 : 0
     });
@@ -397,7 +396,6 @@ function createWorldMap(error, countries, continentNames) {
   }
 
   function equalizeCircleRadius(userEmission) {
-    console.log(userEmission)
     let CO2PerCapitasRange = [Math.min(...CO2PerCapitas), Math.max(...CO2PerCapitas)]
     circleRadiusScale = d3.scaleSqrt()
       .domain(CO2PerCapitasRange)

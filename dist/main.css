@@ -72,7 +72,6 @@ body {
 body > #sidebar {
   display: flex;
   flex-direction: column;
-  justify-content:space-between;
   border-right: white;
   border: 2px;
 }
@@ -91,13 +90,6 @@ body > #sidebar {
   width: 100%;
   text-align: center;
   text-shadow: 5px 5px #27333d;
-}
-
-body > #sidebar > #socials {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  margin-bottom: 20px;
 }
 
 #sidebar-fixed {
@@ -232,17 +224,16 @@ input[type="range"] {
   margin: 0% 0%;
 }
 
-form {
-  display:flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 #controls > div {
   display: flex;
   flex-direction: column;
   margin: 15px 15px;
   color: black;
+}
+
+#user-carbon-graph {
+  width: 100%;
+  overflow:auto;
 }
 
 #user-carbon-graph rect {
@@ -252,6 +243,15 @@ form {
 
 #user-carbon-graph rect#hidden {
   stroke-width: 0;
+}
+
+#bubble-chart {
+  width: 100%;
+  overflow:auto;
+}
+
+svg {
+  overflow:auto;
 }
 
 #bubble-chart > svg {
@@ -306,26 +306,6 @@ form {
   margin-top: 10px;
 }
 
-#step1-instruction-container {
-  position: absolute;
-  width: 28vw;
-  display: flex;
-  flex-direction: row;
-  justify-content:space-between;
-  top: 1.5vw;
-  left: 70vw;
-}
-
-#step2-instruction-container {
-  position: absolute;
-  width: 28vw;
-  display: flex;
-  flex-direction: row;
-  justify-content:space-between;
-  top: 835px;
-  left: 70vw;
-}
-
 .stepX {
   font-family: 'Knewave';
   color: #2d3d49;
@@ -378,6 +358,11 @@ form {
 
 .bubble-text {
   font-size: 17px;
+}
+
+#visualizations {
+  width: calc(100vw - 420px);
+  overflow: auto;
 }
 /*!*************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/index.scss ***!
