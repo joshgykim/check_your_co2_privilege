@@ -69,8 +69,8 @@ function createCarbonCalculator(error, calculatorJSON) {
                       .attr("height", canvasHeight);
 
   let boundMargin = 80;
-  let barSpacing = 160;
-  let barWidth = 120;
+  let barSpacing = 170;
+  let barWidth = 130;
   let canvasUpperB = boundMargin;
   let canvasLowerB = canvasHeight - boundMargin;
   let xOffset = 200;
