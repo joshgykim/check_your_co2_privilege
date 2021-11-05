@@ -101,7 +101,7 @@ circle {
 }
 
 div#user-carbon-input-box {
-  width: 27vw;
+  width: 420px;
   padding-top: 40px;
   display: flex;
   flex-direction: column;
@@ -224,9 +224,13 @@ form {
 
 }
 
-#sidebar, #sidebar-fixed {
+#sidebar {
   background: #485d6f;
   color: white;
+}
+
+#sidebar-fixed {
+  color: rgba(255, 255, 255, 0.724);
 }
 
 .result-category {
