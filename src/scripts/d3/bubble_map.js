@@ -60,8 +60,17 @@ function createWorldMap(error, countries, continentNames) {
     function filterData(CO2data) {
       let countriesCO2 = [];
       let countryCO2Names = Object.keys(CO2data);
+      let exclude = [
+        "World",
+        "Antarctica",
+        "Curacao",
+        "French Guiana",
+        "Guadeloupe",
+        "Martinique",
+        "Mayotte"
+      ];
       countryCO2Names.forEach( name => {
-        if (CO2data[name].iso_code && name != "World") {
+        if (CO2data[name].iso_code && !exclude.includes(name)) {
           let dataArr = CO2data[name].data;
           let countryCO2Obj = {
             Countryname: name,
@@ -93,6 +102,8 @@ function createWorldMap(error, countries, continentNames) {
 
   // Create circle elements
   function createCircles() {
+    console.log(countries)
+    console.log(worldCO2Data)
     circleRadiusScale = d3.scaleSqrt()
       .domain(populationRange)
       .range([MAPVARIABLES.circleSizeMin, MAPVARIABLES.circleSizeMax]);
@@ -384,6 +395,7 @@ function createWorldMap(error, countries, continentNames) {
       updateCircleRadius(populations, "#population")
     });
     d3.select("#CO2").on("click", function () {
+      console.log(CO2s)
       updateCircleRadius(CO2s, "#CO2")
     });
     d3.select("#CO2-per-capita").on("click", function() {
