@@ -69,11 +69,8 @@ function createWorldMap(error, countries, continentNames) {
             data: dataArr[(dataArr.length-1)]
           }
           countriesCO2.push(countryCO2Obj);
-        } else {
-          console.log(name);
         }
       })
-      console.log(countriesCO2);
       return countriesCO2
     }
 
