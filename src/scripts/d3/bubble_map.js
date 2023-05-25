@@ -46,6 +46,7 @@ function createWorldMap(error, countries, continentNames) {
     }
 
     worldCO2Data = filterData(await promise.json());
+    debugger;
     CO2s = worldCO2Data.map(countryObj => {
       return countryObj.data.co2 ? countryObj.data.co2 : 0
     });
@@ -53,26 +54,32 @@ function createWorldMap(error, countries, continentNames) {
       return countryObj.data.co2_per_capita ? countryObj.data.co2_per_capita : 0
     });
 
+    debugger;
+
     addFillListeners();
     addGroupingListeners();
     addCalculatorListener();
 
     // Configure fetched data to a usable format
     function filterData(CO2data) {
-      let countriesCO2 = [];
-      let countryCO2Names = Object.keys(CO2data);
-      let countryNamez = Object.values(countries).map( obj => obj.CountryName )
-      countryCO2Names.forEach( name => {
-        if (CO2data[name].iso_code && countryNamez.includes(name)) {
-          let dataArr = CO2data[name].data;
-          let countryCO2Obj = {
-            Countryname: name,
-            data: dataArr[(dataArr.length-1)] // most recent carbon data
-          }
-          countriesCO2.push(countryCO2Obj);
-        }
-      })
-      return countriesCO2
+      debugger;
+      // let C02data = CO2dataRaw.;
+      // let countriesCO2 = [];
+      // let countryCO2Names = Object.keys(CO2data);
+      // let countryNamez = Object.values(countries).map( obj => obj.CountryName )
+      // countryCO2Names.forEach( name => {
+      //   if (CO2data[name].iso_code && countryNamez.includes(name)) {
+      //     let dataArr = CO2data[name].data;
+      //     let countryCO2Obj = {
+      //       Countryname: name,
+      //       data: dataArr[(dataArr.length-1)] // most recent carbon data
+      //     }
+      //     countriesCO2.push(countryCO2Obj);
+      //   }
+      // })
+      // return countriesCO2
+
+      return CO2data.CO2Data;
     }
 
   }
