@@ -59,10 +59,11 @@ function createWorldMap(error, countries, continentNames) {
 
     // Configure fetched data to a usable format
     function filterData(CO2data) {
+      debugger;
       // let C02data = CO2dataRaw.;
       // let countriesCO2 = [];
       // let countryCO2Names = Object.keys(CO2data);
-      // let countryNamez = Object.values(countries).map( obj => obj.CountryName )
+      let countryNamez = countries.map( obj => obj.CountryName );
       // countryCO2Names.forEach( name => {
       //   if (CO2data[name].iso_code && countryNamez.includes(name)) {
       //     let dataArr = CO2data[name].data;
@@ -74,8 +75,8 @@ function createWorldMap(error, countries, continentNames) {
       //   }
       // })
       // return countriesCO2
-
-      return CO2data.CO2Data;
+      debugger;
+      return CO2data.CO2Data.filter( countryData => countryNamez.includes(countryData.Countryname))
     }
 
   }
