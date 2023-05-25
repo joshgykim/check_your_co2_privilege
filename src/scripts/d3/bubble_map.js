@@ -39,7 +39,8 @@ function createWorldMap(error, countries, continentNames) {
 
   // Fetch worldCO2Data asynchronously and update circles
   async function getWorldCO2Data() {
-    const promise = await fetch("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.json");
+    // const promise = await fetch("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.json");
+    const promise = await fetch("https://raw.githubusercontent.com/joshgykim/check_your_co2_privilege/main/dist/assets/owid-co2-data.json");
     if (!promise.ok) {
       throw new Error("API not available");
     }
