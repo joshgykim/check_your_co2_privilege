@@ -67,7 +67,7 @@ function createWorldMap(error, countries, continentNames) {
           let dataArr = CO2data[name].data;
           let countryCO2Obj = {
             Countryname: name,
-            data: dataArr[(dataArr.length-1)]
+            data: dataArr[(dataArr.length-1)] // most recent carbon data
           }
           countriesCO2.push(countryCO2Obj);
         }
