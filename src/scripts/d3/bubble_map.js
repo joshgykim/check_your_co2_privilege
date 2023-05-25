@@ -46,7 +46,6 @@ function createWorldMap(error, countries, continentNames) {
     }
 
     worldCO2Data = filterData(await promise.json());
-    debugger;
     CO2s = worldCO2Data.map(countryObj => {
       return countryObj.data.co2 ? countryObj.data.co2 : 0
     });
@@ -54,15 +53,12 @@ function createWorldMap(error, countries, continentNames) {
       return countryObj.data.co2_per_capita ? countryObj.data.co2_per_capita : 0
     });
 
-    debugger;
-
     addFillListeners();
     addGroupingListeners();
     addCalculatorListener();
 
     // Configure fetched data to a usable format
     function filterData(CO2data) {
-      debugger;
       // let C02data = CO2dataRaw.;
       // let countriesCO2 = [];
       // let countryCO2Names = Object.keys(CO2data);
