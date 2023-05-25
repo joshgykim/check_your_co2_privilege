@@ -59,7 +59,6 @@ function createWorldMap(error, countries, continentNames) {
 
     // Configure fetched data to a usable format
     function filterData(CO2data) {
-      debugger;
       // let C02data = CO2dataRaw.;
       // let countriesCO2 = [];
       // let countryCO2Names = Object.keys(CO2data);
@@ -75,7 +74,6 @@ function createWorldMap(error, countries, continentNames) {
       //   }
       // })
       // return countriesCO2
-      debugger;
       return CO2data.CO2Data.filter( countryData => countryNamez.includes(countryData.Countryname))
     }
 
